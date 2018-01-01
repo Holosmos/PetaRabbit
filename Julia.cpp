@@ -153,7 +153,7 @@ void calculeLigne(int y, int longueur, int hauteur,
 				  function<Complexe(Homogene)> convergenceDe,
 				  VertexArray &matrice){
 
-	int k = y*longueur; // Ce sera la case du tableau matrice : correspond au nombre de points déjà calculés
+	int k = y * (longueur+1); // Ce sera la case du tableau matrice : correspond au nombre de points déjà calculés
 
 	for (int j = 0; j<= longueur ; j++){
 
