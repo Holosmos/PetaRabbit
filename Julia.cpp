@@ -1,6 +1,5 @@
 #include "Julia.h"
 
-using namespace sf;
 using namespace std;
 
 
@@ -146,14 +145,13 @@ Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
 
 // Création de la matrice
 
-
 void calculeLigne(int y, int longueur, int hauteur,
 				  double echelle, Complexe origine,
 				  int borneDIteration, bool peindreEnBlanc,
 				  function<Complexe(Homogene)> convergenceDe,
-				  VertexArray &matrice){
+				  vector <unsigned char> &matrice){
 
-	int k = y * (longueur+1); // Ce sera la case du tableau matrice : correspond au nombre de points déjà calculés
+	int k = 4 * y * longueur; // Ce sera la case du tableau matrice : correspond au nombre de points*nbr de couleurs déjà calculés
 
 	for (int j = 0; j<= longueur ; j++){
 
@@ -174,56 +172,79 @@ void calculeLigne(int y, int longueur, int hauteur,
 						 (137 + (int)(0.5 + nombreIteree*1.0 / borneDIteration*118))
 						 : nombreIteree * 4);  // formule maison pour une harmonie
 		if (peindreEnBlanc) {
-			matrice[k] = Vertex(Vector2f(j,y), Color(couleur,couleur,couleur));
+			matrice[k + 0] = couleur; // r
+			matrice[k + 1] = couleur; // g
+			matrice[k + 2] = couleur; // b
+			matrice[k + 3] = 255; // a
 		}
 		else{
 			switch (int(resultatConvergence.partieImaginaire())%7) { // 7 couleurs prévues
 				case 0:
-					matrice[k] = Vertex(Vector2f(j,y), Color(couleur,couleur,couleur));
+					matrice[k + 0] = couleur; // r
+					matrice[k + 1] = couleur; // g
+					matrice[k + 2] = couleur; // b
+					matrice[k + 3] = 255; // a
 					break;
 				case 1:
-					matrice[k] = Vertex(Vector2f(j,y), Color(couleur,0,0));
+					matrice[k + 0] = couleur; // r
+					matrice[k + 1] = 0; // g
+					matrice[k + 2] = 0; // b
+					matrice[k + 3] = 255; // a
 					break;
 				case 2:
-					matrice[k] = Vertex(Vector2f(j,y), Color(0,couleur,0));
+					matrice[k + 0] = 0; // r
+					matrice[k + 1] = couleur; // g
+					matrice[k + 2] = 0; // b
+					matrice[k + 3] = 255; // a
 					break;
 				case 3:
-					matrice[k] = Vertex(Vector2f(j,y),Color(0,0,couleur));
+					matrice[k + 0] = 0; // r
+					matrice[k + 1] = 0; // g
+					matrice[k + 2] = couleur; // b
+					matrice[k + 3] = 255; // a
 					break;
 				case 4:
-					matrice[k] = Vertex(Vector2f(j,y), Color(couleur,couleur,0));
+					matrice[k + 0] = couleur; // r
+					matrice[k + 1] = couleur; // g
+					matrice[k + 2] = 0; // b
+					matrice[k + 3] = 255; // a
 					break;
 				case 5:
-					matrice[k] = Vertex(Vector2f(j,y), Color(0,couleur,couleur));
+					matrice[k + 0] = 0; // r
+					matrice[k + 1] = 0; // g
+					matrice[k + 2] = couleur; // b
+					matrice[k + 3] = 255; // a
 					break;
 				case 6:
-					matrice[k] = Vertex(Vector2f(j,y), Color(couleur,0,couleur));
+					matrice[k + 0] = couleur; // r
+					matrice[k + 1] = 0; // g
+					matrice[k + 2] = couleur; // b
+					matrice[k + 3] = 255; // a
 					break;
 			}
 
 		}
 
-		k++;
+		k += 4;
 
 	}
 
 }
 
-void Julia::creeLaMatrice(VertexArray &matrice, int longueur, int hauteur, double echelle, Complexe origine){
+void Julia::creeLaMatrice(vector<unsigned char> &matrice, int longueur, int hauteur, double echelle, Complexe origine){
 
 	// Pré-calculs pour les coordonnées des points étudiés
 
 	Complexe origineFenetre = Complexe(longueur,hauteur) * (echelle/2.0);
     origine = origine - origineFenetre;
 
-    matrice.setPrimitiveType(Points);
-    matrice.clear();
-    matrice.resize((longueur+1) * (hauteur+1));
+    if(matrice.size() < longueur * hauteur)
+    matrice.resize(longueur * hauteur);
 
 	function<Complexe(Homogene)> convergenceDuPoint = [this](Homogene p){return convergenceDe(p);};
 
 	int y;
-    for (y = 0; y <= hauteur -1 ; y += 2){ // on parcourt les lignes puis les colonnes
+    for (y = 0; y <= hauteur - 1; y += 2){ // on parcourt les lignes puis les colonnes
 
 		// Deux threads pour profiter pleinement d'un processeur dual-core
 		thread a(calculeLigne, y, longueur, hauteur, echelle, origine,

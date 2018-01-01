@@ -1,7 +1,6 @@
 #ifndef __Simulation__Julia__
 #define __Simulation__Julia__
 
-#include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -37,7 +36,7 @@ public:
 
 	bool peindreEnBlanc = false;
 
-        void creeLaMatrice(sf::VertexArray &tab, int longueur, int hauteur, double echelle, Complexe origine = Complexe(0,0));
+        void creeLaMatrice(std::vector<unsigned char> &tab, int longueur, int hauteur, double echelle, Complexe origine = Complexe(0,0));
 
 	void chercheANouveau(Complexe origine, double echelle, int longueur, int hauteur);
 

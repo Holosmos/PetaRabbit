@@ -1,5 +1,3 @@
-
-#include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -11,7 +9,6 @@
 #include "Cycle.h"
 
 
-using namespace sf;
 using namespace std;
 
 
@@ -35,24 +32,30 @@ bool encodeOneStep(const char* filename, std::vector<unsigned char>& image, unsi
 }
 
 
-int main(){
-	unsigned int hauteur = 300 -1; //29160 - 1; // HAUTEUR     4320 * 7680  = 4 * 4 * 1920 * 1080
-	unsigned int longueur =  350 - 1; // 900 - 1; //34830 - 1; // LONGUEUR
+int main(int argc, char **argv){
+	unsigned int hauteur = 300; //29160 - 1; // HAUTEUR     4320 * 7680  = 4 * 4 * 1920 * 1080
+	unsigned int longueur =  350; // 900 - 1; //34830 - 1; // LONGUEUR
+
+	double echelle, o_x, o_y;
+
+
+	if(argc != 4){
+		std::cout<< "Usage: " << argv[0] << "zoom offset_x offset_y" << std::endl;
+		std::cout<< "If format is incorrect value is set to 0" << std::endl;
+		std::cout<< "Exemple: " << argv[0] << " 0.005 0 0";
+		return EXIT_FAILURE;
+	}
+
+	echelle = atof(argv[1]);
+	o_x = atof(argv[2]);
+	o_y = atof(argv[3]);
 
 	Complexe i(0,1);
 
 	// Création de la fenêtre
 
-	RenderWindow window(VideoMode(longueur, hauteur), "Simulation Julia");
-
-	window.setFramerateLimit(5);
-
-	bool remakeSize = false, remake = false;
-
 	// Principaux paramètres de la simulation
 
-	double echelle = 0.005 ;
-	double o_x = 0.0,o_y=0.0;
 	Complexe origine(o_x,o_y);
 	int borne = 500;
 	bool makeW = true;
@@ -67,7 +70,6 @@ int main(){
 	// D'autres exemples
 
 	/*/
-
 
 	vector<Complexe> p1(3,0*i);    // LAPIN
 	p1[2] = 1. + 0*i;
@@ -131,127 +133,13 @@ int main(){
 	Julia julia(methode);
 	julia.borneDIteration = borne;
 	julia.peindreEnBlanc = makeW;
-	VertexArray tab;
-
-        julia.creeLaMatrice(tab, longueur, hauteur, echelle, origine);
-
 
 	const char* filename =  "photoJulia.png";
-
-	//generate some image
-	unsigned lon = longueur+1;
-	unsigned hau = hauteur+1;
-
 	std::vector<unsigned char> image;
-	image.resize(lon * hau * 4);
-	for(unsigned long long int y = 0; y < hau; y++)
-		for(unsigned long long int x = 0; x < lon; x++)
-		{
-	  image[4 * y * lon + 4 * x + 0] = tab[y * lon + x].color.r;
-	  image[4 * y * lon + 4 * x + 1] = tab[y * lon + x].color.g,
-	  image[4 * y * lon + 4 * x + 2] = tab[y * lon + x].color.b;
-	  image[4 * y * lon + 4 * x + 3] = tab[y * lon + x].color.a;
-		}
+	image.resize(longueur * hauteur * 4);
 
-	if(encodeOneStep(filename, image, lon, hau) == false)
+        julia.creeLaMatrice(image, longueur, hauteur, echelle, origine); // Fill image
+	if(encodeOneStep(filename, image, longueur, hauteur) == false)
             return EXIT_FAILURE;
-
-
-	// Gestion de la fenêtre et des interactions avec l'utilisateur
-
-	while (window.isOpen()){
-
-		Event event;
-		while (window.pollEvent(event))
-		{
-
-			if (event.type == Event::Closed){
-				window.close();
-			}
-
-			if (event.type == Event::Resized){
-				remakeSize = true;
-			}
-
-			if (Keyboard::isKeyPressed(Keyboard::Up)) {
-				echelle /= 1.3;
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Down)){
-				echelle *= 1.3;
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Right)){
-				borne += (int) (borne*1.0/4);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Left)){
-				borne -= (int) (borne*1.0/4);
-				remake = true;
-			}
-
-			if (Keyboard::isKeyPressed(Keyboard::Z)) {
-				o_y += 10*echelle;
-				origine = Complexe(o_x,o_y);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::S)) {
-				o_y -= 10*echelle;
-				origine = Complexe(o_x,o_y);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Q)) {
-				o_x -= 10*echelle;
-				origine = Complexe(o_x,o_y);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				o_x += 10*echelle;
-				origine = Complexe(o_x,o_y);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::W)) {
-				julia.peindreEnBlanc = true;
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::X)) {
-				julia.peindreEnBlanc = false;
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::C)) {
-				julia.chercheANouveau(origine, echelle, longueur, hauteur);
-				remake = true;
-			}
-
-		}
-
-		if (remakeSize) {
-
-			Vector2u size=window.getSize();
-			longueur = size.x;
-			hauteur = size.y;
-
-			julia.creeLaMatrice(tab, longueur, hauteur, echelle, origine);
-
-			Vector2i position = window.getPosition();
-			window.setSize(Vector2u(longueur, hauteur));
-			window.setPosition(position);
-
-			remakeSize = false;
-		}
-		if (remake) {
-			julia.borneDIteration = borne;
-			julia.creeLaMatrice(tab, longueur, hauteur, echelle, origine);
-			remake = false;
-		}
-
-		window.clear(Color::White);
-
-		window.draw(tab);
-
-		window.display();
-
-	}
- //*/
-	return 0;
+	return EXIT_SUCCESS;
 }
