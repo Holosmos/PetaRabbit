@@ -4,35 +4,16 @@
 #include <iostream>
 #include <vector>
 
-#include "lodepng.h"
-
 #include "Algebre.h"
 #include "Julia.h"
 #include "Cycle.h"
+#include "Dynamicien.h"
 
 
 using namespace sf;
 using namespace std;
 
 
-// Conversion de deux polynômes en une fraction rationnelle utilisable avec les coordonnées homogènes
-
-// retourne false si il y a eu un problème lors de l'encodage
-bool encodeOneStep(const char* filename, std::vector<unsigned char>& image, unsigned width, unsigned height)
-{
-	//Encode the image
-	unsigned error = lodepng::encode(filename, image, width, height);
-
-	//if there's an error, display it
-	if(error) {
-            std::cout << "encoder error "
-                      << error << ": "
-                      << lodepng_error_text(error)
-                      << std::endl;
-            return false;
-        }
-        return true;
-}
 
 
 int main(){
@@ -65,28 +46,27 @@ int main(){
 	vector<Complexe> p2(1,1 +0*i);
 
 	// D'autres exemples
-
+	
 	/*/
-
-
+	
 	vector<Complexe> p1(3,0*i);    // LAPIN
 	p1[2] = 1. + 0*i;
 	p1[0] = -0.123 + 0.745*i;
 	vector<Complexe> p2(1,1 +0*i);
-
+	 
 	 vector<Complexe> p1(3,0*i);  // COLLIER
 	 p1[2] = 1. + 0*i;
 	 p1[0] = -1 + 0*i;
 	 vector<Complexe> p2(3,0*i);
 	 p2[2] = 1. + 0*i;
-
+	 
 	 vector<Complexe> p1(3,0*i); // GALAXIE
 	 p1[2] = -0.138 + 0*i;
 	 p1[1] = -0.303 + 0*i;
 	 p1[0] = -0.138 + 0*i;
 	 vector<Complexe> p2(2,0*i);
 	 p2[1] = 1 +0*i;
-
+	 
 	 vector<Complexe> p1(3,0*i); // STRANGE
 	 p1[2] = 1. + 0*i;
 	 p1[0] = -0.8 + 0.*i;
@@ -98,8 +78,7 @@ int main(){
 	 vector<Complexe> p2(3,0*i);
 	 p2[2] = 3. + 0*i;
 	 p2[0] = -2. + 0*i;
-
-
+	 
 	 vector<Complexe> p1(26,0*i);   // PENTAGONE
 	 p1[25] = 87. + 0*i;
 	 p1[20] = -3335. + 0*i;
@@ -112,67 +91,51 @@ int main(){
 	 p2[19] = 6670. + 0*i;
 	 p2[9] = 3335. + 0*i;
 	 p2[4]  = 87. + 0*i;
-
-
-
+	 
 	//*/
-
-
-
+	
+	
+	
 	// Préparation de la fonction qui sera utilisée
-
+	
 	Polynome nume = Polynome(p1), deno = Polynome(p2);
 	FractionRationnelle frac(nume, deno);
 	std::function<Homogene(Homogene)> methode = frac.fonctionRationnelle;
-
-
-	// Lancement de l'objet Julia
-
-	Julia julia(methode);
-	julia.borneDIteration = borne;
-	julia.peindreEnBlanc = makeW;
-	VertexArray tab;
-
-        julia.creeLaMatrice(tab, longueur, hauteur, echelle, origine);
-
-
-	const char* filename =  "photoJulia.png";
-
-	//generate some image
-	unsigned lon = longueur+1;
-	unsigned hau = hauteur+1;
-
-	std::vector<unsigned char> image;
-	image.resize(lon * hau * 4);
-	for(unsigned long long int y = 0; y < hau; y++)
-		for(unsigned long long int x = 0; x < lon; x++)
-		{
-	  image[4 * y * lon + 4 * x + 0] = tab[y * lon + x].color.r;
-	  image[4 * y * lon + 4 * x + 1] = tab[y * lon + x].color.g,
-	  image[4 * y * lon + 4 * x + 2] = tab[y * lon + x].color.b;
-	  image[4 * y * lon + 4 * x + 3] = tab[y * lon + x].color.a;
-		}
-
-	if(encodeOneStep(filename, image, lon, hau) == false)
-            return EXIT_FAILURE;
-
-
+	
+	
+	// Lancement de Julia et Dynamicien
+	Cycle moteurDesCycles(methode);
+	Dynamicien dynamicien;
+	
+	std::vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
+	
+	dynamicien.peindreEnBlanc = makeW;
+	
+	function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
+		Julia julia(methode, borne, cycles);
+		return julia.convergenceDe(point);
+	};
+	dynamicien.dynamique = dyn;
+	
+	VertexArray tab = dynamicien.creeLaMatrice(longueur, hauteur, echelle);
+	
+	
 	// Gestion de la fenêtre et des interactions avec l'utilisateur
-
+	
 	while (window.isOpen()){
-
+		
 		Event event;
 		while (window.pollEvent(event))
 		{
-
+			
 			if (event.type == Event::Closed){
 				window.close();
 			}
-
+			
 			if (event.type == Event::Resized){
 				remakeSize = true;
 			}
-
+			
 			if (Keyboard::isKeyPressed(Keyboard::Up)) {
 				echelle /= 1.3;
 				remake = true;
@@ -189,7 +152,7 @@ int main(){
 				borne -= (int) (borne*1.0/4);
 				remake = true;
 			}
-
+			
 			if (Keyboard::isKeyPressed(Keyboard::Z)) {
 				o_y += 10*echelle;
 				origine = Complexe(o_x,o_y);
@@ -211,46 +174,64 @@ int main(){
 				remake = true;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::W)) {
-				julia.peindreEnBlanc = true;
+				dynamicien.peindreEnBlanc = true;
 				remake = true;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::X)) {
-				julia.peindreEnBlanc = false;
+				dynamicien.peindreEnBlanc = false;
 				remake = true;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::C)) {
-				julia.chercheANouveau(origine, echelle, longueur, hauteur);
+				moteurDesCycles.chercheANouveau(origine, echelle);
+				std::vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
+				function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
+					Julia julia(methode, borne, cycles);
+					return julia.convergenceDe(point);
+				};
+				dynamicien.dynamique = dyn;
+
 				remake = true;
 			}
-
+			
 		}
-
+		
 		if (remakeSize) {
-
 			Vector2u size=window.getSize();
 			longueur = size.x;
 			hauteur = size.y;
-
-			julia.creeLaMatrice(tab, longueur, hauteur, echelle, origine);
-
+			
+			tab.clear();
+			tab.resize(longueur*hauteur);
+			tab = dynamicien.creeLaMatrice(longueur, hauteur, echelle, origine);
+			
 			Vector2i position = window.getPosition();
-			window.setSize(Vector2u(longueur, hauteur));
+			window.create(VideoMode(longueur, hauteur), "Simulation Julia");
 			window.setPosition(position);
-
+			
 			remakeSize = false;
 		}
 		if (remake) {
-			julia.borneDIteration = borne;
-			julia.creeLaMatrice(tab, longueur, hauteur, echelle, origine);
+			tab.clear();
+			
+			dynamicien.peindreEnBlanc = makeW;
+			
+			dyn = [methode, borne, cycles](Homogene point){
+				Julia julia(methode, borne, cycles);
+				return julia.convergenceDe(point);
+			};
+			dynamicien.dynamique = dyn;
+			
+			tab = dynamicien.creeLaMatrice(longueur, hauteur, echelle, origine);
+			
 			remake = false;
 		}
-
+		
 		window.clear(Color::White);
-
+		
 		window.draw(tab);
-
+		
 		window.display();
-
+		
 	}
  //*/
 	return 0;

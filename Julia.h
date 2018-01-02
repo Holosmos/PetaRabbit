@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
-#include <functional>
 
 #include <thread>
 #include <cmath>
@@ -13,34 +12,25 @@
 #include "Algebre.h"
 #include "Cycle.h"
 
-class Julia {
+#include "lodepng.h"
 
-	Cycle moteurDesCycles;
-	std::vector<Homogene> cyclesAttractifs;
-
+struct Julia {
+	
 	std::function<Homogene (Homogene)> fonctionIteree;
-
+	std::vector<Homogene> *cyclesAttractifs;
+	
 	Homogene pointDefaut = Homogene(Complexe(-1,-2),Complexe(-3,-4));
-	Homogene pointInfini = Homogene(Complexe(1.0),Complexe(0.0));
-
-	Complexe uniteImaginaire = Complexe(0,1);
-
-	bool nEstPasDejaUnCycle(Homogene point, double parametreDistance = 0.005);
-
-	Complexe convergenceDe(Homogene z, double parametreConvergence = 0.01);
-
+	
 public:
-
-	int borneDIteration;
-
-	Julia(std::function<Homogene (Homogene)> fonction);
-
-	bool peindreEnBlanc = false;
-
-        void creeLaMatrice(sf::VertexArray &tab, int longueur, int hauteur, double echelle, Complexe origine = Complexe(0,0));
-
-	void chercheANouveau(Complexe origine, double echelle, int longueur, int hauteur);
-
+	Julia(std::function<Homogene (Homogene)> fonction, unsigned int borne, std::vector<Homogene> *cyclesAttractifs);
+	
+	unsigned int borneDIteration;
+	
+	Complexe convergenceDe(Homogene z, double parametreConvergence = 0.01);
+	
+	//void chercheANouveau(Complexe origine, double echelle, int longueur, int hauteur);
 };
+
+
 
 #endif /* defined(__Simulation__Julia__) */

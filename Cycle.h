@@ -7,19 +7,28 @@
 #include "Algebre.h"
 
 class Cycle {
+	std::function<Homogene(Homogene)> fonctionIteree;
+	
 	double c_eps = 0.00005;
 	
 	bool donneUnCycle(Homogene z0);
 
 	Homogene c_point = Homogene(0.0);
+	Homogene pointDefaut = Homogene(Complexe(-1,-2),Complexe(-3,-4));
+	Homogene pointInfini = Homogene(Complexe(1.0),Complexe(0.0));
+	
 
+	bool nEstPasDejaUnCycle(Homogene point, double parametreDistance = 0.005);
+	
+	std::vector<Homogene> cyclesAttractifs;
+	void calculeLesCyclesAttractifs();
+	bool premiereRechercheEffectuee = false;
+	
 public:
 	
-	int c_borne = 100;
-	
-	std::function<Homogene(Homogene)> fonctionIteree;
-	
 	Cycle(std::function<Homogene (Homogene)> fonctionAIterer):fonctionIteree(fonctionAIterer){};
+	
+	int c_borne = 100;
 	
 	void eps(double eps){c_eps = eps;}
 	double eps(){return c_eps;}
@@ -27,8 +36,11 @@ public:
 	void borne(int borne){c_borne = borne;}
 	int borne(){return c_borne;}
 	
-	Homogene chercheUnCycleAuPoint(Homogene z0, Homogene pointParDefaut);
+	std::vector<Homogene>* getCyclesAttractifs();
 	
+	Homogene chercheUnCycleAuPoint(Homogene z0, Homogene pointParDefaut);
+
+	void chercheANouveau(Complexe origine, double echelle);
 };
 
 #endif /* defined(__Simulation__Cycle__) */
