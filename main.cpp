@@ -8,6 +8,7 @@
 #include "Julia.h"
 #include "Cycle.h"
 #include "Dynamicien.h"
+#include "Mandelbrot.h"
 
 
 using namespace sf;
@@ -19,35 +20,43 @@ using namespace std;
 int main(){
 	unsigned int hauteur = 300 -1; //29160 - 1; // HAUTEUR     4320 * 7680  = 4 * 4 * 1920 * 1080
 	unsigned int longueur =  350 - 1; // 900 - 1; //34830 - 1; // LONGUEUR
-
+	
 	Complexe i(0,1);
-
+	
 	// Création de la fenêtre
-
+ 
 	RenderWindow window(VideoMode(longueur, hauteur), "Simulation Julia");
-
+ 
 	window.setFramerateLimit(5);
-
+ 
 	bool remakeSize = false, remake = false;
-
+ 
 	// Principaux paramètres de la simulation
-
+	
 	double echelle = 0.005 ;
 	double o_x = 0.0,o_y=0.0;
 	Complexe origine(o_x,o_y);
-	int borne = 500;
+	int borne = 200;
 	bool makeW = true;
-
+	
 	// La fraction rationnelle étudiée
-
-	vector<Complexe> p1(3,0*i);    // LAPIN
-	p1[2] = 1. + 0*i;
-	p1[0] = -0.123 + 0.745*i;
-	vector<Complexe> p2(1,1 +0*i);
-
+	vector<Complexe> p1(26,0*i);   // PENTAGONE
+	p1[25] = 87. + 0*i;
+	p1[20] = -3335. + 0*i;
+	p1[10] = -6670. + 0*i;
+	p1[5] = -435. + 0*i;
+	p1[0] = 1. + 0*i;
+	vector<Complexe> p2(30,0*i);
+	p2[29] = -1.+0*i;
+	p2[24] = -435. + 0*i;
+	p2[19] = 6670. + 0*i;
+	p2[9] = 3335. + 0*i;
+	p2[4]  = 87. + 0*i;
+	
 	// D'autres exemples
 	
 	/*/
+	 
 	
 	vector<Complexe> p1(3,0*i);    // LAPIN
 	p1[2] = 1. + 0*i;
@@ -110,15 +119,28 @@ int main(){
 	std::vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
 	
 	dynamicien.peindreEnBlanc = makeW;
+	dynamicien.borneDIteration = borne;
 	
 	function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
 		Julia julia(methode, borne, cycles);
 		return julia.convergenceDe(point);
 	};
+	//*/
+	
+	/*/ Lancement de Mandelbrot et Dynamicien
+	Dynamicien dynamicien;
+	dynamicien.peindreEnBlanc = true;
+	dynamicien.borneDIteration = borne;
+	
+	function<Complexe(Homogene)> dyn = [borne](Homogene point){
+		Mandelbrot mandel;
+		mandel.borneDIteration = borne;
+		return mandel.convergencePourParametre(point.carteY());
+	};
+	//*/
+	
 	dynamicien.dynamique = dyn;
-	
 	VertexArray tab = dynamicien.creeLaMatrice(longueur, hauteur, echelle);
-	
 	
 	// Gestion de la fenêtre et des interactions avec l'utilisateur
 	
@@ -181,7 +203,7 @@ int main(){
 				dynamicien.peindreEnBlanc = false;
 				remake = true;
 			}
-			if (Keyboard::isKeyPressed(Keyboard::C)) {
+			/*if (Keyboard::isKeyPressed(Keyboard::C)) {
 				moteurDesCycles.chercheANouveau(origine, echelle);
 				std::vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
 				function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
@@ -191,7 +213,7 @@ int main(){
 				dynamicien.dynamique = dyn;
 
 				remake = true;
-			}
+			}*/
 			
 		}
 		
@@ -214,11 +236,29 @@ int main(){
 			tab.clear();
 			
 			dynamicien.peindreEnBlanc = makeW;
+			dynamicien.borneDIteration = borne;
 			
+			
+			// Selectionner selon la dynamique
+			
+			//  Julia
 			dyn = [methode, borne, cycles](Homogene point){
 				Julia julia(methode, borne, cycles);
 				return julia.convergenceDe(point);
 			};
+			//*/
+			
+			// ====OU====
+			
+			/*/  Mandelbrot
+			dyn = [borne](Homogene point){
+				Mandelbrot mandel;
+				mandel.borneDIteration = borne;
+				return mandel.convergencePourParametre(point.carteY());
+			};
+			//*/
+			///....///
+			
 			dynamicien.dynamique = dyn;
 			
 			tab = dynamicien.creeLaMatrice(longueur, hauteur, echelle, origine);

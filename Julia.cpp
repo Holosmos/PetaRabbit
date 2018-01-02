@@ -1,8 +1,7 @@
 #include "Julia.h"
 
-using namespace sf;
-using namespace std;
 
+using namespace std;
 
 
 // Initialisateur
@@ -16,9 +15,9 @@ Julia::Julia(std::function<Homogene (Homogene)> fonction, unsigned int borne, st
 Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
 
 	// Etude de la convergence d'un point donné
-
+	
 	Homogene copie = z; // Utile pour la seconde partie de la fonction
-
+	
 	for (int j = 0; j <= borneDIteration; j++){
 		for (int k = 0; k < cyclesAttractifs->size(); k++) {
 			Homogene cycle = (*cyclesAttractifs)[k];
@@ -28,14 +27,14 @@ Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
 		}
 		z = fonctionIteree(z);
 	}
-
+	
 	// Recherche d'un cycle en cas de non convergence
 	// À activer selon les cas, peut allonger la durer d'execution.
 	//
-
+	
 	Cycle moteurDesCycles(fonctionIteree);
 	Homogene cycle = moteurDesCycles.chercheUnCycleAuPoint(z, pointDefaut);
-
+	
 	if ((cycle.x != pointDefaut.x || cycle.y != pointDefaut.y)) {
 		(*cyclesAttractifs).push_back(cycle);
 		cout << "+1 spé";
@@ -47,8 +46,9 @@ Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
 			copie = fonctionIteree(copie);
 		}
 	}
-
+	
 	//*/
-
+	 
 	return Complexe(borneDIteration); // renvoie le message qu'il n'y a pas eu de convergence
+
 }

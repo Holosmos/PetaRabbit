@@ -1,7 +1,23 @@
+// Pour utiliser Julia : utiliser ce code dans main.cpp
+/*/ Lancement de Julia et Dynamicien
+Cycle moteurDesCycles(methode);
+Dynamicien dynamicien;
+
+std::vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
+
+dynamicien.peindreEnBlanc = makeW;
+dynamicien.borneDIteration = borne;
+
+function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
+	Julia julia(methode, borne, cycles);
+	return julia.convergenceDe(point);
+};
+//*/
+
+
 #ifndef __Simulation__Julia__
 #define __Simulation__Julia__
 
-#include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -11,8 +27,6 @@
 
 #include "Algebre.h"
 #include "Cycle.h"
-
-#include "lodepng.h"
 
 struct Julia {
 	
