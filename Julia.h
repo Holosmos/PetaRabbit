@@ -40,7 +40,7 @@ public:
 	
 	unsigned int borneDIteration;
 	
-	Complexe convergenceDe(Homogene z, double parametreConvergence = 0.01);
+	Complexe convergenceDe(Homogene z, double parametreConvergence = 0.0005);
 	
 	//void chercheANouveau(Complexe origine, double echelle, int longueur, int hauteur);
 };

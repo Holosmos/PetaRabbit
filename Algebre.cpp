@@ -84,6 +84,12 @@ Complexe Complexe::inverse(){
 	return conjugue().multiplicationAvec(1.0/moduleAuCarre());
 }
 
+Complexe Complexe::racineCarrée(){
+	double mod = module();
+	double theta = acos(partieRe/mod);
+	return sqrt(mod) * Complexe(cos(theta/2.0),sin(theta/2.0));
+}
+
 
 Complexe operator+(Complexe a,Complexe b){
 	return a.additionAvec(b);

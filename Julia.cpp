@@ -29,7 +29,7 @@ Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
 	}
 	
 	// Recherche d'un cycle en cas de non convergence
-	// À activer selon les cas, peut allonger la durer d'execution.
+	/*/ À activer selon les cas, peut allonger la durer d'execution.
 	//
 	
 	Cycle moteurDesCycles(fonctionIteree);

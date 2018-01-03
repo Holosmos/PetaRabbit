@@ -34,11 +34,10 @@
 
 struct Mandelbrot {
 public:
-	
+
+	double parametreConvergence = 0.000001;
 	unsigned int borneDIteration;
 	
-	Complexe convergencePourParametre(Complexe c);
-	
-};
+	Complexe convergencePourParametre(Complexe c);};
 
 #endif /* Mandelbrot_h */

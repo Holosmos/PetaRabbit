@@ -23,16 +23,18 @@
 #include "lodepng.h"
 
 struct Dynamicien {
-	const char* filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
-	
-	bool peindreEnBlanc = false;
 	int borneDIteration;
 	
 	std::function<Complexe(Homogene)> dynamique;
+    std::vector<Complexe> creeLaMatrice(int longueur, int hauteur, double echelle, Complexe origine);
 	
 	
-	sf::VertexArray creeLaMatrice(int longueur, int hauteur, double echelle, Complexe origine = Complexe(0,0));
+    // À vocation à disparaitre
+	sf::VertexArray creeLaMatriceWin(int longueur, int hauteur, double echelle, Complexe origine);
+    const char* filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
+    bool peindreEnBlanc = true;
 };
 
+std::vector<double> coloration(Complexe couleur, bool peindreEnBlanc);
 
 #endif /* Dynamicien_h */
