@@ -84,7 +84,7 @@ Complexe Complexe::inverse(){
 	return conjugue().multiplicationAvec(1.0/moduleAuCarre());
 }
 
-Complexe Complexe::racineCarrée(){
+Complexe Complexe::racineCarree(){
 	double mod = module();
 	double theta = acos(partieRe/mod);
 	return sqrt(mod) * Complexe(cos(theta/2.0),sin(theta/2.0));
@@ -204,10 +204,10 @@ unsigned int min(unsigned int a, unsigned int b){return a<b ? a : b;}
 
 Polynome Polynome::additionAvec(Polynome polynome){
 	std::vector<Complexe> nouveauxCoefficients(0);
-	
+
 	unsigned int nouveauDegre = max(degreDuPolynome, polynome.degre());
 	unsigned int minDegre = min(degreDuPolynome, polynome.degre());
-	
+
 	for (unsigned int i = 0 ; i <= minDegre ; i++){
 		nouveauxCoefficients.push_back(coefficientsDuPolynome[i] + polynome.coefficientDIndice(i));
 	}
@@ -231,13 +231,13 @@ Polynome Polynome::multiplicationAvec(Complexe scalaire){
 Polynome Polynome::multiplicationAvec(Polynome polynome){
 	std::vector<Complexe> nouveauxCoefficients(0);
 	unsigned int nouveauDegre = degreDuPolynome + polynome.degre();
-	
+
 	bool premierDegrePlusGrand = degreDuPolynome >= polynome.degre();
-	
+
 	for (unsigned int i = 0; i <= nouveauDegre; i++) {
-		
+
 		Complexe scalaireDegreI;
-		
+
 		if (premierDegrePlusGrand){
 			for (unsigned int j = 0; j <= polynome.degre(); j++){
 				unsigned int k = i-j ;
@@ -250,10 +250,10 @@ Polynome Polynome::multiplicationAvec(Polynome polynome){
 				scalaireDegreI = scalaireDegreI + (coefficientsDuPolynome[j] * polynome.coefficientDIndice(k));
 			}
 		}
-		
+
 		nouveauxCoefficients.push_back(scalaireDegreI);
 	}
-	
+
 	return Polynome(nouveauxCoefficients);
 }
 
@@ -269,7 +269,7 @@ Complexe Polynome::evaluationAuPoint(Complexe point){
 
 Polynome Polynome::polynomeDerive(){
 	std::vector<Complexe> nouveauxCoefficients(0);
-	
+
 	for (unsigned int i = 1; i <= degreDuPolynome - 1; i++) {
 		Complexe coefficient = i * coefficientsDuPolynome[i];
 		nouveauxCoefficients.push_back(coefficient);
@@ -358,7 +358,7 @@ Homogene::Homogene(double a){
 }
 
 void Homogene::print(){
-	
+
 	if (y != 0.0) {
 		x = x/y;
 		y = Complexe(1.0);
@@ -368,10 +368,10 @@ void Homogene::print(){
 	}
 	double a1 = x.partieReelle();
 	double a2 = x.partieImaginaire();
-	
+
 	double b1 = y.partieReelle();
 	double b2 = y.partieImaginaire();
-	
+
 	std::cout << "["<<a1<< " + "<<a2<<" * i  :  "<<b1<<" + "<<b2<<" * i]"<<std::endl;
 }
 
@@ -401,11 +401,11 @@ double Homogene::distanceAvec(Homogene b){
 // --------------------------------
 // --------------------------------
 
-	
+
 FractionRationnelle::FractionRationnelle(){
 	numerateur = Polynome();
 	denominateur = Polynome(Complexe(1.0));
-	
+
 	Polynome nume = numerateur;
 	Polynome deno = denominateur;
 	fonctionRationnelle = [nume, deno](Homogene point){return evaluationAuPoint(nume, deno, point);};
@@ -413,7 +413,7 @@ FractionRationnelle::FractionRationnelle(){
 FractionRationnelle::FractionRationnelle(Polynome num){
 	numerateur = num;
 	denominateur = Polynome(Complexe(1.0));
-	
+
 	Polynome nume = numerateur;
 	Polynome deno = denominateur;
 	fonctionRationnelle = [nume, deno](Homogene point){return evaluationAuPoint(nume, deno, point);};
@@ -421,12 +421,12 @@ FractionRationnelle::FractionRationnelle(Polynome num){
 FractionRationnelle::FractionRationnelle(Polynome num, Polynome denom){
 	numerateur = num;
 	denominateur = denom;
-	
+
 	Polynome nume = numerateur;
 	Polynome deno = denominateur;
 	fonctionRationnelle = [nume, deno](Homogene point){return evaluationAuPoint(nume, deno, point);};
 }
-	
+
 Homogene evaluationAuPoint(Polynome numerateur, Polynome denominateur, Homogene point){
 	// Cas complexe
 	if (point.y != 0.0) {
