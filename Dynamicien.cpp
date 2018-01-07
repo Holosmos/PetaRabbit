@@ -87,9 +87,8 @@ VertexArray Dynamicien::creeLaMatriceWin(int longueur, int hauteur, double echel
 	image.resize(lon * hau * 4);
 
 
-	int y;
-        #pragma omp parallel for
-	for (y = 0; y <= hauteur -1; y++){ // on parcourt les lignes puis les colonnes
+    #pragma omp parallel for
+	for (int y = 0; y < hau; y++){ // on parcourt les lignes puis les colonnes
 
 		VertexArray ligne(Points,longueur+1);
 
@@ -151,9 +150,8 @@ std::vector<Complexe> Dynamicien::creeLaMatrice(int longueur, int hauteur, doubl
 
     std::vector<Complexe> image(hauteur*longueur,0.);
 
-    int y;
     #pragma omp parallel for
-    for (y = 0; y < hauteur -1 ; y++){ // on parcourt les lignes puis les colonnes
+    for (int y = 0; y < hauteur; y++){ // on parcourt les lignes puis les colonnes
 
         std::vector<Complexe> ligne1(longueur, 0.);
 
