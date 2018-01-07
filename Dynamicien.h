@@ -14,7 +14,6 @@
 #include <iostream>
 #include <vector>
 
-#include <thread>
 #include <cmath>
 
 #include "Algebre.h"
@@ -24,11 +23,11 @@
 
 struct Dynamicien {
 	int borneDIteration;
-	
+
 	std::function<Complexe(Homogene)> dynamique;
     std::vector<Complexe> creeLaMatrice(int longueur, int hauteur, double echelle, Complexe origine);
-	
-	
+
+
     // À vocation à disparaitre
 	sf::VertexArray creeLaMatriceWin(int longueur, int hauteur, double echelle, Complexe origine);
     const char* filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
