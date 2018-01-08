@@ -3,100 +3,42 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <complex>
 
 #include "Algebre.h"
 #include "Julia.h"
 #include "Cycle.h"
 #include "Dynamicien.h"
 #include "Mandelbrot.h"
+#include "Exemples.h"
 
 
 using namespace sf;
 using namespace std;
 
-
 int main(int argc, char** argv){
-    double scale = 1;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
+    double scale = 0.5;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
 	unsigned int hauteur = scale*1080 ; //
 	unsigned int longueur =  scale*1920 ;
 
-	Complexe i(0,1);
+	complex<double> i(0,1);
 
 	// Principaux paramètres de la simulation
 
 	double echelle = 0.00215 / scale ;
 	double o_x = 0.0, o_y=0.0;
-	Complexe origine(o_x,o_y);
-	int borne = 1200;
+	complex<double> origine(o_x,o_y);
+	int borne = 100;
 	bool makeW = true;
 
-	// La fraction rationnelle étudiée
-
-    vector<Complexe> p1(3,0*i);    // LAPIN
-    p1[2] = 1. + 0*i;
-    p1[0] = -0.123 + 0.745*i;
-    vector<Complexe> p2(1,1 +0*i);
-
-	// D'autres exemples
-	/*/
-
-     vector<Complexe> p1(3,0*i);    // LAPIN
-     p1[2] = 1. + 0*i;
-     p1[0] = -0.123 + 0.745*i;
-     vector<Complexe> p2(1,1 +0*i);
-
-	 vector<Complexe> p1(3,0*i);  // COLLIER
-	 p1[2] = 1. + 0*i;
-	 p1[0] = -1 + 0*i;
-	 vector<Complexe> p2(3,0*i);
-	 p2[2] = 1. + 0*i;
-
-	 vector<Complexe> p1(3,0*i); // GALAXIE
-	 p1[2] = -0.138 + 0*i;
-	 p1[1] = -0.303 + 0*i;
-	 p1[0] = -0.138 + 0*i;
-	 vector<Complexe> p2(2,0*i);
-	 p2[1] = 1 +0*i;
-
-	 vector<Complexe> p1(3,0*i); // STRANGE
-	 p1[2] = 1. + 0*i;
-	 p1[0] = -0.8 + 0.*i;
-	 vector<Complexe> p2(1,1 +0*i);
-
-	 vector<Complexe> p1(4,0*i);  // NEWTON
-	 p1[3] = 2. + 0*i;
-	 p1[0] = -2. + 0*i;
-	 vector<Complexe> p2(3,0*i);
-	 p2[2] = 3. + 0*i;
-	 p2[0] = -2. + 0*i;
-
-	 vector<Complexe> p1(26,0*i);   // PENTAGONE
-	 p1[25] = 87. + 0*i;
-	 p1[20] = -3335. + 0*i;
-	 p1[10] = -6670. + 0*i;
-	 p1[5] = -435. + 0*i;
-	 p1[0] = 1. + 0*i;
-	 vector<Complexe> p2(30,0*i);
-	 p2[29] = -1.+0*i;
-	 p2[24] = -435. + 0*i;
-	 p2[19] = 6670. + 0*i;
-	 p2[9] = 3335. + 0*i;
-	 p2[4]  = 87. + 0*i;
-
-	//*/
-
-
-
 	// Préparation de la fonction qui sera utilisée
-
-	Polynome nume = Polynome(p1), deno = Polynome(p2);
-	FractionRationnelle frac(nume, deno);
+	FractionRationnelle frac = exemple(0);
 	std::function<Homogene(Homogene)> methode = frac.fonctionRationnelle;
 
 
 	Dynamicien dynamicien;
 	dynamicien.borneDIteration = borne;
-	function<Complexe(Homogene)> dyn;
+	function<complex<double>(Homogene)> dyn;
 	bool estJulia = true;
 	bool estMandelbrot = !estJulia;
 
@@ -112,7 +54,6 @@ int main(int argc, char** argv){
 			return julia.convergenceDe(point);
 		};
 	}
-	//
 	// Mandelbrot
 	if (estMandelbrot) {
 		dynamicien.peindreEnBlanc = true;
@@ -123,13 +64,11 @@ int main(int argc, char** argv){
 			return mandel.convergencePourParametre(point.carteY());
 		};
 	}
-	//
 
     dynamicien.dynamique = dyn;
 
 
     // ===== Fabrication de l'image seule et en noir&blanc
-
 
     // Utilisation d'une symétrie verticale
     bool symetrieVerticale = false;
@@ -137,12 +76,12 @@ int main(int argc, char** argv){
     std::vector<unsigned char> image;
     if (symetrieVerticale){
         hauteur = (hauteur/2)*2;
-        origine.partieImaginaire(0.);
+        origine.imag(0.);
 
-        Complexe origineBis = origine + Complexe(0,hauteur) * (echelle/4.0);
+        complex<double> origineBis = origine + complex<double>(0,hauteur) * (echelle/4.0);
         unsigned int hauteurBis = hauteur/2;
 
-        std::vector<Complexe> matrice = dynamicien.creeLaMatrice(longueur, hauteurBis, echelle, origineBis);
+        std::vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteurBis, echelle, origineBis);
 
         image.resize(longueur * hauteur * 4);
 
@@ -159,7 +98,7 @@ int main(int argc, char** argv){
         }
     }
     else{
-        std::vector<Complexe> matrice = dynamicien.creeLaMatrice(longueur, hauteur, echelle, origine);
+        std::vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteur, echelle, origine);
 
         image.resize(longueur * hauteur * 4);
 
@@ -179,7 +118,7 @@ int main(int argc, char** argv){
     else
         filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
     lodepng::encode(filename, image, longueur, hauteur);
-    //*/ =====
+    //*/ // =====
 
 
 	/*/ ==== Gestion de la fenêtre et des interactions avec l'utilisateur
@@ -227,22 +166,22 @@ int main(int argc, char** argv){
 
 			if (Keyboard::isKeyPressed(Keyboard::Z)) {
 				o_y += 10*echelle;
-				origine = Complexe(o_x,o_y);
+				origine = complex<double>(o_x,o_y);
 				remake = true;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::S)) {
 				o_y -= 10*echelle;
-				origine = Complexe(o_x,o_y);
+				origine = complex<double>(o_x,o_y);
 				remake = true;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::Q)) {
 				o_x -= 10*echelle;
-				origine = Complexe(o_x,o_y);
+				origine = complex<double>(o_x,o_y);
 				remake = true;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
 				o_x += 10*echelle;
-				origine = Complexe(o_x,o_y);
+				origine = complex<double>(o_x,o_y);
 				remake = true;
 			}
 			if (Keyboard::isKeyPressed(Keyboard::W)) {
@@ -256,7 +195,7 @@ int main(int argc, char** argv){
 			if (estJulia && Keyboard::isKeyPressed(Keyboard::C)) {
 				moteurDesCycles.chercheANouveau(origine, echelle);
 				std::vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
-				function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
+				function<complex<double>(Homogene)> dyn = [methode, borne, cycles](Homogene point){
 					Julia julia(methode, borne, cycles);
 					return julia.convergenceDe(point);
 				};

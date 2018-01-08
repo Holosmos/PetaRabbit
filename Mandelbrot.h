@@ -28,16 +28,17 @@
 
 #include <thread>
 #include <cmath>
+#include <complex>
 
 #include "Algebre.h"
 
 
 struct Mandelbrot {
-public:
-
 	double parametreConvergence = 0.000001;
 	unsigned int borneDIteration;
 	
-	Complexe convergencePourParametre(Complexe c);};
+    std::complex<double> convergencePourParametre(std::complex<double> c);
+
+};
 
 #endif /* Mandelbrot_h */

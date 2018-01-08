@@ -12,7 +12,7 @@ Julia::Julia(std::function<Homogene (Homogene)> fonction, unsigned int borne, st
 // Test de convergence des itérées
 
 
-Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
+complex<double> Julia::convergenceDe(Homogene z, double parametreConvergence){
 
 	// Etude de la convergence d'un point donné
 	
@@ -22,7 +22,7 @@ Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
 		for (int k = 0; k < cyclesAttractifs->size(); k++) {
 			Homogene cycle = (*cyclesAttractifs)[k];
 			if (cycle.distanceAvec(z) < parametreConvergence) {
-				return Complexe(j,k+1); // correspond au message : j itérées, proche du cycle k
+				return complex<double>(j,k+1); // correspond au message : j itérées, proche du cycle k
 			}
 		}
 		z = fonctionIteree(z);
@@ -49,6 +49,6 @@ Complexe Julia::convergenceDe(Homogene z, double parametreConvergence){
 	
 	//*/
 	 
-	return Complexe(borneDIteration); // renvoie le message qu'il n'y a pas eu de convergence
+	return complex<double>(borneDIteration); // renvoie le message qu'il n'y a pas eu de convergence
 
 }

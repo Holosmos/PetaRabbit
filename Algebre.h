@@ -15,69 +15,9 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <complex>
 
-// --------------------------------
-// --------------------------------
-// ---------------- COMPLEXE
-// --------------------------------
-// --------------------------------
-
-struct Complexe{
-
-public:
-
-	Complexe();
-	Complexe(double partieReelle);
-	Complexe(double partieReelle,double partieImaginaire);
-
-	void print();
-
-	double partieReelle();
-	double partieImaginaire();
-	void partieReelle(double partieReelle);
-	void partieImaginaire(double partieImaginaire);
-
-	double moduleAuCarre();
-	double module();
-	Complexe conjugue();
-
-	Complexe additionAvec(Complexe nombreComplexe);
-	Complexe oppose();
-	Complexe multiplicationAvec(Complexe nombreComplexe);
-	Complexe multiplicationAvec(double scalaire);
-	Complexe inverse();
-
-	Complexe racineCarree();
-
-private:
-
-	double partieRe;
-	double partieIm;
-
-};
-
-Complexe operator+(Complexe a,Complexe b);
-Complexe operator+(Complexe a, double b);
-Complexe operator+(double a, Complexe b);
-
-Complexe operator-(Complexe a);
-Complexe operator-(Complexe a,Complexe b);
-Complexe operator-(Complexe a, double b);
-Complexe operator-(double a, Complexe b);
-
-Complexe operator*(Complexe a,Complexe b);
-Complexe operator*(Complexe a, double b);
-Complexe operator*(double a, Complexe b);
-
-Complexe operator/(Complexe a,Complexe b);
-Complexe operator/(Complexe a, double b);
-Complexe operator/(double a, Complexe b);
-
-bool operator==(Complexe a, Complexe b);
-bool operator==(Complexe a, double b);
-bool operator!=(Complexe a, Complexe b);
-bool operator!=(Complexe a, double b);
-
+using namespace std;
 
 // --------------------------------
 // --------------------------------
@@ -86,30 +26,23 @@ bool operator!=(Complexe a, double b);
 // --------------------------------
 
 struct Polynome {
-
-	std::vector<Complexe> coefficientsDuPolynome;
-
+	std::vector<complex<double>> coefficientsDuPolynome;
 	unsigned int degreDuPolynome;
-	Complexe uniteImaginaire;
 
-
-public:
 
 	Polynome();
-	Polynome(std::vector<Complexe> coefficientsDuPolynome);
-	Polynome(Complexe constante);
+	Polynome(std::vector<complex<double>> coefficientsDuPolynome);
+	Polynome(complex<double> constante);
 
 	void print();
-
-	unsigned int degre();
-	Complexe coefficientDIndice(unsigned int i);
+	complex<double> coefficientDIndice(unsigned int i);
 
 
 	Polynome additionAvec(Polynome polynome);
-	Polynome multiplicationAvec(Complexe scalaire);
+	Polynome multiplicationAvec(complex<double> scalaire);
 	Polynome multiplicationAvec(Polynome polynome);
 
-	Complexe evaluationAuPoint(Complexe point);
+	complex<double> evaluationAuPoint(complex<double> point);
 
 	Polynome polynomeDerive();
 	Polynome polynomeDeriveNeme(unsigned int n);
@@ -117,19 +50,19 @@ public:
 };
 
 Polynome operator+(Polynome A, Polynome B);
-Polynome operator+(Polynome A, Complexe B);
+Polynome operator+(Polynome A, complex<double> B);
 Polynome operator+(Polynome A, double B);
 
 Polynome operator*(Polynome A, Polynome B);
-Polynome operator*(Polynome A, Complexe B);
+Polynome operator*(Polynome A, complex<double> B);
 Polynome operator*(Polynome A, double B);
 
-Polynome operator/(Polynome A, Complexe B);
+Polynome operator/(Polynome A, complex<double> B);
 Polynome operator/(Polynome A, double B);
 
 Polynome operator-(Polynome A);
 Polynome operator-(Polynome A, Polynome B);
-Polynome operator-(Polynome A, Complexe B);
+Polynome operator-(Polynome A, complex<double> B);
 Polynome operator-(Polynome A, double B);
 
 
@@ -140,23 +73,20 @@ Polynome operator-(Polynome A, double B);
 // --------------------------------
 
 struct Homogene {
-
-public:
-
-	Complexe x;
-	Complexe y;
+	complex<double> x;
+	complex<double> y;
 
 	void print();
 
 
 	Homogene();
-	Homogene(Complexe a, Complexe b);
-	Homogene(Complexe a);
+	Homogene(complex<double> a, complex<double> b);
+	Homogene(complex<double> a);
 	Homogene(double a, double b);
 	Homogene(double a);
 
-	Complexe carteY();
-	Complexe carteX();
+	complex<double> carteY();
+	complex<double> carteX();
 
 	double distanceAvec(Homogene b);
 };
@@ -169,19 +99,14 @@ public:
 // --------------------------------
 
 struct FractionRationnelle {
-
 	Polynome numerateur;
 	Polynome denominateur;
 
-public:
 	std::function<Homogene(Homogene)> fonctionRationnelle;
 
 	FractionRationnelle();
 	FractionRationnelle(Polynome numerateur);
 	FractionRationnelle(Polynome numerateur, Polynome denominateur);
-
-
-
 };
 
 Homogene evaluationAuPoint(Polynome numerateur, Polynome denominateur, Homogene point);

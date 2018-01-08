@@ -12,9 +12,9 @@ using namespace std;
 
 void calculeLigneW(int y,
 				  int longueur, int hauteur,
-				  double echelle, Complexe origine,
+				  double echelle, complex<double> origine,
 				  int borneDIteration, bool peindreEnBlanc,
-				  function<Complexe(Homogene)> convergenceDe,
+				  function<complex<double>(Homogene)> convergenceDe,
 				  VertexArray *ligne){
 
 
@@ -22,14 +22,14 @@ void calculeLigneW(int y,
 
 		// Calculs des coordonnées du pixel choisi
 
-		Complexe z0 = Complexe(j,hauteur-y) * echelle;
+		complex<double> z0 = complex<double>(j,hauteur-y) * echelle;
 		z0 = z0 + origine;
 
 		// Calculs sur la convergence du point
 
-		Homogene z(z0,Complexe(1,0));
-		Complexe resultatConvergence = convergenceDe(z);
-		int nombreIteree = resultatConvergence.partieReelle();
+		Homogene z(z0,complex<double>(1,0));
+		complex<double> resultatConvergence = convergenceDe(z);
+		int nombreIteree = resultatConvergence.real();
 
 		// Coloration en fonction du nombre d'itérées
 
@@ -41,7 +41,7 @@ void calculeLigneW(int y,
 			(*ligne)[j] = Vertex(Vector2f(j,y), Color(couleur,couleur,couleur));
 		}
 		else{
-			switch (int(resultatConvergence.partieImaginaire())%7) { // 7 couleurs prévues
+			switch (int(resultatConvergence.imag())%7) { // 7 couleurs prévues
 				case 0:
 					(*ligne)[j] = Vertex(Vector2f(j,y), Color(couleur,couleur,couleur));
 					break;
@@ -70,25 +70,17 @@ void calculeLigneW(int y,
 
 }
 
-VertexArray Dynamicien::creeLaMatriceWin(int longueur, int hauteur, double echelle, Complexe origine){
+VertexArray Dynamicien::creeLaMatriceWin(int longueur, int hauteur, double echelle, complex<double> origine){
 
 	// Pré-calculs pour les coordonnées des points étudiés
 
-	Complexe origineFenetre = Complexe(longueur,hauteur) * (echelle/2.0);
+	complex<double> origineFenetre = complex<double>(longueur,hauteur) * (echelle/2.0);
 	origine = origine - origineFenetre;
 
 	VertexArray matrice(Points,(longueur+1)*(hauteur+1));
 
-	//generate some image
-	unsigned lon = longueur+1;
-	unsigned hau = hauteur+1;
-
-	std::vector<unsigned char> image;
-	image.resize(lon * hau * 4);
-
-
     #pragma omp parallel for
-	for (int y = 0; y < hau; y++){ // on parcourt les lignes puis les colonnes
+	for (int y = 0; y <= hauteur; y++){ // on parcourt les lignes puis les colonnes
 
 		VertexArray ligne(Points,longueur+1);
 
@@ -96,39 +88,33 @@ VertexArray Dynamicien::creeLaMatriceWin(int longueur, int hauteur, double echel
 
 		unsigned int k = y * (longueur+1);
 		for (unsigned int j = 0; j <= longueur; j++) {
-			matrice[k+j] = ligne[j];
-			image[4 * y * lon + 4 * j + 0] = ligne[j].color.r;
-			image[4 * y * lon + 4 * j + 1] = ligne[j].color.g;
-			image[4 * y * lon + 4 * j + 2] = ligne[j].color.b;
-			image[4 * y * lon + 4 * j + 3] = ligne[j].color.a;
+            matrice[k+j] = ligne[j];
 		}
 	}
-	lodepng::encode(filename, image, (longueur +1), (hauteur +1));
-
 	return matrice;
 }
 
 
 void calculeLigne(int y,
                   int longueur, int hauteur,
-                  double echelle, Complexe origine,
+                  double echelle, complex<double> origine,
                   int borneDIteration,
-                  function<Complexe(Homogene)> convergenceDe,
-                  std::vector<Complexe> *ligne){
+                  function<complex<double>(Homogene)> convergenceDe,
+                  std::vector<complex<double>> *ligne){
 
 
     for (int j = 0; j< longueur ; j++){
 
         // Calculs des coordonnées du pixel choisi
 
-        Complexe z0 = Complexe(j,hauteur-y) * echelle;
+        complex<double> z0 = complex<double>(j,hauteur-y) * echelle;
         z0 = z0 + origine;
 
         // Calculs sur la convergence du point
 
-        Homogene z(z0,Complexe(1,0));
-        Complexe resultatConvergence = convergenceDe(z);
-        int nombreIteree = resultatConvergence.partieReelle();
+        Homogene z(z0,complex<double>(1,0));
+        complex<double> resultatConvergence = convergenceDe(z);
+        int nombreIteree = resultatConvergence.real();
 
         // Coloration en fonction du nombre d'itérées
 
@@ -136,39 +122,38 @@ void calculeLigne(int y,
                              (137 + (int)(0.5 + nombreIteree*1.0 / borneDIteration*118))
                              : nombreIteree * 4);  // formule maison pour une harmonie
 
-        (*ligne)[j] = Complexe(couleur,resultatConvergence.partieImaginaire());
+        (*ligne)[j] = complex<double>(couleur,resultatConvergence.imag());
     }
 
 }
 
-std::vector<Complexe> Dynamicien::creeLaMatrice(int longueur, int hauteur, double echelle, Complexe origine){
+std::vector<complex<double>> Dynamicien::creeLaMatrice(int longueur, int hauteur, double echelle, complex<double> origine){
     // Pré-calculs pour les coordonnées des points étudiés
 
-    Complexe origineFenetre = Complexe(longueur,hauteur) * (echelle/2.0);
+    complex<double> origineFenetre = complex<double>(longueur,hauteur) * (echelle/2.0);
     origine = origine - origineFenetre;
 
-
-    std::vector<Complexe> image(hauteur*longueur,0.);
+    std::vector<complex<double>> image(hauteur*longueur,0.);
 
     #pragma omp parallel for
     for (int y = 0; y < hauteur; y++){ // on parcourt les lignes puis les colonnes
 
-        std::vector<Complexe> ligne1(longueur, 0.);
+        std::vector<complex<double>> ligne(longueur, 0.);
 
-        calculeLigne(y, longueur, hauteur, echelle, origine, borneDIteration, dynamique, &ligne1);
+        calculeLigne(y, longueur, hauteur, echelle, origine, borneDIteration, dynamique, &ligne);
 
         for (unsigned int j = 0; j < longueur; j++) {
-            image[y*longueur + j] = ligne1[j];
+            image[y*longueur + j] = ligne[j];
         }
     }
     return image;
 }
 
 
-std::vector<double> coloration(Complexe couleur, bool peindreEnBlanc){
-    std::vector<double> couleurObtenue(3,couleur.partieReelle());
+std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc){
+    std::vector<double> couleurObtenue(3,couleur.real());
     if (!peindreEnBlanc){
-        switch (int(couleur.partieImaginaire())%7) { // 7 couleurs prévues
+        switch (int(couleur.imag())%7) { // 7 couleurs prévues
             case 1:
                 couleurObtenue[1] = 0.;
                 couleurObtenue[2] = 0.;

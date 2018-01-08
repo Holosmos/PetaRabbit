@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <cmath>
+#include <complex>
 
 #include "Algebre.h"
 #include "Cycle.h"
@@ -24,16 +25,16 @@
 struct Dynamicien {
 	int borneDIteration;
 
-	std::function<Complexe(Homogene)> dynamique;
-    std::vector<Complexe> creeLaMatrice(int longueur, int hauteur, double echelle, Complexe origine);
+	std::function<complex<double>(Homogene)> dynamique;
+    std::vector<complex<double>> creeLaMatrice(int longueur, int hauteur, double echelle, complex<double> origine);
 
 
     // À vocation à disparaitre
-	sf::VertexArray creeLaMatriceWin(int longueur, int hauteur, double echelle, Complexe origine);
+	sf::VertexArray creeLaMatriceWin(int longueur, int hauteur, double echelle, complex<double> origine);
     const char* filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
     bool peindreEnBlanc = true;
 };
 
-std::vector<double> coloration(Complexe couleur, bool peindreEnBlanc);
+std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc);
 
 #endif /* Dynamicien_h */

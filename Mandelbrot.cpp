@@ -10,29 +10,23 @@
 
 using namespace std;
 
-Complexe Mandelbrot::convergencePourParametre(Complexe c){
-	function<Complexe(Complexe)> fonction = [c](Complexe z){
+complex<double> Mandelbrot::convergencePourParametre(complex<double> c){
+	function<complex<double>(complex<double>)> fonction = [c](complex<double> z){
 		return z*z + c;};
 	
-	Complexe point = c;
-    /*/if (c.moduleAuCarre() < 0.0625) {
-        return Complexe(0, 0.0);
-    }//*/
-    if ((c + 0.25).moduleAuCarre() < 0.24) {
-        return Complexe(borneDIteration,0.0);
+	complex<double> point = c;
+    if (norm(c + 0.25) < 0.24) {
+        return complex<double>(borneDIteration,0.0);
     }
-    if ((c + 1.).moduleAuCarre() < 0.05){
-        return Complexe(borneDIteration,0.0);
+    if (norm(c + 1.) < 0.05){
+        return complex<double>(borneDIteration,0.0);
     }
 	//itérations
 	for (unsigned int j = 0; j < borneDIteration; j++) {
-		if (point.moduleAuCarre() >= 4.1){
-			return Complexe(j, 0.0);
+		if (norm(point) >= 4.1){
+			return complex<double>(j, 0.0);
 		}
 		point = fonction(point);
 	}
-	return Complexe(borneDIteration, 0.0);
+	return complex<double>(borneDIteration, 0.0);
 }
-
-
-

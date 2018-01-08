@@ -65,7 +65,7 @@ void Cycle::calculeLesCyclesAttractifs(){
 	
 	for (int j =1; j<= nombreDeTirages; j++) {
 		
-		Complexe z((((rand()%2==0)?-1:1)*rand()%45678)/45678.*j/10.,
+		complex<double> z((((rand()%2==0)?-1:1)*rand()%45678)/45678.*j/10.,
 				   (((rand()%2==0)?-1:1)*rand()%45678)/45678.*j/10.);
 		
 		Homogene z0(z);
@@ -115,13 +115,13 @@ bool Cycle::nEstPasDejaUnCycle(Homogene point, double parametreDistance){
 	return true;
 }
 
-void Cycle::chercheANouveau(Complexe origine, double echelle){
+void Cycle::chercheANouveau(complex<double> origine, double echelle){
 	 
 	 // Recherche plus ciblée de cycles
 	 unsigned int nombreTirages = 100;
 	 
 	 for (int j =1; j<= nombreTirages; j++) {
-		 Complexe z((((rand()%2==0)?-1:1)*rand()%123456)/123456.*echelle/10.,
+		 complex<double> z((((rand()%2==0)?-1:1)*rand()%123456)/123456.*echelle/10.,
 					(((rand()%2==0)?-1:1)*rand()%123456)/123456.*echelle/10.);
 		 z = z + origine;
 		 

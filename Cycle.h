@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "Algebre.h"
+#include <complex>
 
 class Cycle {
 	std::function<Homogene(Homogene)> fonctionIteree;
@@ -14,8 +15,8 @@ class Cycle {
 	bool donneUnCycle(Homogene z0);
 
 	Homogene c_point = Homogene(0.0);
-	Homogene pointDefaut = Homogene(Complexe(-1,-2),Complexe(-3,-4));
-	Homogene pointInfini = Homogene(Complexe(1.0),Complexe(0.0));
+	Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
+	Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0));
 	
 
 	bool nEstPasDejaUnCycle(Homogene point, double parametreDistance = 0.005);
@@ -40,7 +41,7 @@ public:
 	
 	Homogene chercheUnCycleAuPoint(Homogene z0, Homogene pointParDefaut);
 
-	void chercheANouveau(Complexe origine, double echelle);
+	void chercheANouveau(complex<double> origine, double echelle);
 };
 
 #endif /* defined(__Simulation__Cycle__) */
