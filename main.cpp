@@ -105,11 +105,11 @@ int main(int argc, char** argv){
             }
     }
 
-    string filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
-    //if (argc > 1)
-    //    filename = argv[1];
-    //else
-    //    filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
+    string filename;
+    if (argc > 1)
+        filename = argv[1];
+    else
+        filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
     lodepng::encode(filename, image, longueur, hauteur);
 
     //*/ // =====
