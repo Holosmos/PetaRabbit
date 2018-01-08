@@ -27,7 +27,7 @@ class Cycle {
 	
 public:
 	
-	Cycle(std::function<Homogene (Homogene)> fonctionAIterer):fonctionIteree(fonctionAIterer){};
+	Cycle(const std::function<Homogene (Homogene)> &fonctionAIterer):fonctionIteree(fonctionAIterer){};
 	
 	int c_borne = 100;
 	

@@ -10,11 +10,13 @@
 using namespace sf;
 using namespace std;
 
+Dynamicien::Dynamicien(const unsigned int &borne, const bool &peindreBlanc) : borneDIteration(borne), peindreEnBlanc(peindreBlanc), dynamique(0){}
+
 void calculeLigneW(int y,
 				  int longueur, int hauteur,
 				  double echelle, complex<double> origine,
 				  int borneDIteration, bool peindreEnBlanc,
-				  function<complex<double>(Homogene)> convergenceDe,
+				  function<complex<double>(Homogene)>* convergenceDe,
 				  VertexArray *ligne){
 
 
@@ -28,7 +30,7 @@ void calculeLigneW(int y,
 		// Calculs sur la convergence du point
 
 		Homogene z(z0,complex<double>(1,0));
-		complex<double> resultatConvergence = convergenceDe(z);
+		complex<double> resultatConvergence = (*convergenceDe)(z);
 		int nombreIteree = resultatConvergence.real();
 
 		// Coloration en fonction du nombre d'itérées
@@ -99,7 +101,7 @@ void calculeLigne(int y,
                   int longueur, int hauteur,
                   double echelle, complex<double> origine,
                   int borneDIteration,
-                  function<complex<double>(Homogene)> convergenceDe,
+                  function<complex<double>(Homogene)>* convergenceDe,
                   std::vector<complex<double>> *ligne){
 
 
@@ -113,7 +115,7 @@ void calculeLigne(int y,
         // Calculs sur la convergence du point
 
         Homogene z(z0,complex<double>(1,0));
-        complex<double> resultatConvergence = convergenceDe(z);
+        complex<double> resultatConvergence = (*convergenceDe)(z);
         int nombreIteree = resultatConvergence.real();
 
         // Coloration en fonction du nombre d'itérées
@@ -147,36 +149,4 @@ std::vector<complex<double>> Dynamicien::creeLaMatrice(int longueur, int hauteur
         }
     }
     return image;
-}
-
-
-std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc){
-    std::vector<double> couleurObtenue(3,couleur.real());
-    if (!peindreEnBlanc){
-        switch (int(couleur.imag())%7) { // 7 couleurs prévues
-            case 1:
-                couleurObtenue[1] = 0.;
-                couleurObtenue[2] = 0.;
-                break;
-            case 2:
-                couleurObtenue[0] = 0.;
-                couleurObtenue[2] = 0.;
-                break;
-            case 3:
-                couleurObtenue[0] = 0.;
-                couleurObtenue[1] = 0.;
-                break;
-            case 4:
-                couleurObtenue[2] = 0.;
-                break;
-            case 5:
-                couleurObtenue[0] = 0.;
-                break;
-            case 6:
-                couleurObtenue[1] = 0.;
-                break;
-        }
-
-    }
-    return couleurObtenue;
 }

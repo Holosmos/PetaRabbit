@@ -21,10 +21,10 @@ Polynome::Polynome() : degreDuPolynome(0) {
 	coeff.push_back(complex<double>(0.0,0.0));
 	coefficientsDuPolynome = coeff;
 }
-Polynome::Polynome(std::vector<complex<double>> coefficientsDuPolynome): coefficientsDuPolynome(coefficientsDuPolynome){
+Polynome::Polynome(const std::vector<complex<double>> &coefficientsDuPolynome): coefficientsDuPolynome(coefficientsDuPolynome){
 	degreDuPolynome = coefficientsDuPolynome.size() - 1;
 }
-Polynome::Polynome(complex<double> constante){
+Polynome::Polynome(const complex<double> &constante){
 	std::vector<complex<double>> coeff(0);
 	coeff.push_back(constante);
 	coefficientsDuPolynome = coeff ;
@@ -73,7 +73,7 @@ Polynome Polynome::additionAvec(Polynome polynome){
 	}
 	return Polynome(nouveauxCoefficients);
 }
-Polynome Polynome::multiplicationAvec(complex<double> scalaire){
+Polynome Polynome::multiplicationAvec(const complex<double> &scalaire){
 	std::vector<complex<double>> nouveauxCoefficients(0);
 	for (unsigned int i = 0; i <= degreDuPolynome; i++) {
 		nouveauxCoefficients.push_back(scalaire*coefficientsDuPolynome[i]);
@@ -109,7 +109,7 @@ Polynome Polynome::multiplicationAvec(Polynome polynome){
 	return Polynome(nouveauxCoefficients);
 }
 
-complex<double> Polynome::evaluationAuPoint(complex<double> point){
+complex<double> Polynome::evaluationAuPoint(const complex<double> &point){
 	complex<double> valeur(0);
 	complex<double> puissanceDuPoint(1);
 	for (unsigned int i = 0; i <= degreDuPolynome; i++) {
@@ -128,7 +128,7 @@ Polynome Polynome::polynomeDerive(){
 	}
 	return Polynome(nouveauxCoefficients);
 }
-Polynome Polynome::polynomeDeriveNeme(unsigned int n){
+Polynome Polynome::polynomeDeriveNeme(const unsigned int &n){
 	Polynome resultat(coefficientsDuPolynome);
 	for (unsigned int i = 1; i <= n; i++) {
 		resultat = resultat.polynomeDerive();
@@ -138,43 +138,43 @@ Polynome Polynome::polynomeDeriveNeme(unsigned int n){
 
 
 
-Polynome operator+(Polynome A, Polynome B){
+Polynome operator+(Polynome A, const Polynome &B){
 	return A.additionAvec(B);
 }
-Polynome operator+(Polynome A, complex<double> B){
+Polynome operator+(const Polynome &A, const complex<double> &B){
 	return A + Polynome(B);
 }
-Polynome operator+(Polynome A, double B){
+Polynome operator+(const Polynome &A, const double &B){
 	return A + Polynome(complex<double>(B));
 }
 
-Polynome operator*(Polynome A, Polynome B){
+Polynome operator*(Polynome A, const Polynome &B){
 	return A.multiplicationAvec(B);
 }
-Polynome operator*(Polynome A, complex<double> B){
+Polynome operator*(Polynome A, const complex<double> &B){
 	return A.multiplicationAvec(B);
 }
-Polynome operator*(Polynome A, double B){
+Polynome operator*(Polynome A, const double &B){
 	return A.multiplicationAvec(complex<double>(B));
 }
 
-Polynome operator/(Polynome A, complex<double> B){
+Polynome operator/(const Polynome &A, const complex<double> &B){
 	return A * (1.0/B);
 }
-Polynome operator/(Polynome A, double B){
+Polynome operator/(const Polynome &A, const double &B){
 	return A * (1.0/B);
 }
 
-Polynome operator-(Polynome A){
+Polynome operator-(const Polynome &A){
 	return A*(-1.0);
 }
-Polynome operator-(Polynome A, Polynome B){
+Polynome operator-(const Polynome &A, const Polynome &B){
 	return A + (-B);
 }
-Polynome operator-(Polynome A, complex<double> B){
+Polynome operator-(const Polynome &A, const complex<double> &B){
 	return A - Polynome(B);
 }
-Polynome operator-(Polynome A, double B){
+Polynome operator-(const Polynome &A, const double &B){
 	return A - Polynome(complex<double>(B));
 }
 
@@ -189,19 +189,19 @@ Polynome operator-(Polynome A, double B){
 
 Homogene::Homogene() : x(0.0), y(1.0) {}
 
-Homogene::Homogene(complex<double> a, complex<double> b){
+Homogene::Homogene(const complex<double> &a, const complex<double> &b){
 	x = a;
 	y = b;
 }
-Homogene::Homogene(complex<double> a){
+Homogene::Homogene(const complex<double> &a){
 	x = a;
 	y = complex<double>(1.0);
 }
-Homogene::Homogene(double a, double b){
+Homogene::Homogene(const double &a, const double &b){
 	x = complex<double>(a);
 	y = complex<double>(b);
 }
-Homogene::Homogene(double a){
+Homogene::Homogene(const double &a){
 	x = complex<double>(a);
 	y = complex<double>(1.0);
 }
@@ -259,7 +259,7 @@ FractionRationnelle::FractionRationnelle(){
 	Polynome deno = denominateur;
 	fonctionRationnelle = [nume, deno](Homogene point){return evaluationAuPoint(nume, deno, point);};
 }
-FractionRationnelle::FractionRationnelle(Polynome num){
+FractionRationnelle::FractionRationnelle(const Polynome &num){
 	numerateur = num;
 	denominateur = Polynome(complex<double>(1.0));
 
@@ -267,7 +267,7 @@ FractionRationnelle::FractionRationnelle(Polynome num){
 	Polynome deno = denominateur;
 	fonctionRationnelle = [nume, deno](Homogene point){return evaluationAuPoint(nume, deno, point);};
 }
-FractionRationnelle::FractionRationnelle(Polynome num, Polynome denom){
+FractionRationnelle::FractionRationnelle(const Polynome &num, const Polynome &denom){
 	numerateur = num;
 	denominateur = denom;
 

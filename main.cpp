@@ -5,119 +5,113 @@
 #include <vector>
 #include <complex>
 
-#include "Algebre.h"
-#include "Julia.h"
-#include "Cycle.h"
-#include "Dynamicien.h"
-#include "Mandelbrot.h"
-#include "Exemples.h"
-
-
 using namespace sf;
 using namespace std;
 
+// Premier axe
+
+#include "Algebre.h"
+
+#include "Cycle.h"
+#include "Julia.h"
+#include "Mandelbrot.h"
+
+// Deuxième axe
+
+#include "Dynamicien.h"
+
+// Troisième axe
+
+#include "Moteur.h"
+
+
 int main(int argc, char** argv){
-    double scale = 0.5;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
+    
+    // Taille de la simulation
+    
+    double scale = .5;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
 	unsigned int hauteur = scale*1080 ; //
 	unsigned int longueur =  scale*1920 ;
 
-	complex<double> i(0,1);
-
-	// Principaux paramètres de la simulation
+	// Paramètres de la fenêtre de simulation
 
 	double echelle = 0.00215 / scale ;
 	double o_x = 0.0, o_y=0.0;
 	complex<double> origine(o_x,o_y);
+
 	int borne = 100;
-	bool makeW = true;
+	bool peindreEnBlanc = false;
 
 	// Préparation de la fonction qui sera utilisée
+
 	FractionRationnelle frac = exemple(0);
-	std::function<Homogene(Homogene)> methode = frac.fonctionRationnelle;
+	function<Homogene(Homogene)> fonction = frac.fonctionRationnelle;
 
+    // Préparation du moteur de la dynamique
 
-	Dynamicien dynamicien;
-	dynamicien.borneDIteration = borne;
+	Dynamicien dynamicien(borne, peindreEnBlanc);
 	function<complex<double>(Homogene)> dyn;
+
 	bool estJulia = true;
 	bool estMandelbrot = !estJulia;
 
-	// Julia
-	Cycle moteurDesCycles(methode);
-	std::vector<Homogene>* cycles;
+    bool symetrieVerticale = false;
+
+	// Cas d'un Julia
+    Cycle moteurDesCycles(fonction);
+    vector<Homogene>* cycles;
 	if (estJulia) {
 		cycles = moteurDesCycles.getCyclesAttractifs();
-		dynamicien.peindreEnBlanc = makeW;
-
-		dyn = [methode, borne, cycles](Homogene point){
-			Julia julia(methode, borne, cycles);
+		dyn = [&fonction, &borne, cycles](Homogene point){
+            Julia julia(fonction, borne, cycles);
 			return julia.convergenceDe(point);
 		};
 	}
-	// Mandelbrot
+	// Cas d'un Mandelbrot
 	if (estMandelbrot) {
-		dynamicien.peindreEnBlanc = true;
-
-		dyn = [borne](Homogene point){
-			Mandelbrot mandel;
-			mandel.borneDIteration = borne;
+        Mandelbrot mandel(borne);
+		dyn = [&mandel](Homogene point){
 			return mandel.convergencePourParametre(point.carteY());
 		};
 	}
 
-    dynamicien.dynamique = dyn;
-
+    dynamicien.dynamique = &dyn;
 
     // ===== Fabrication de l'image seule et en noir&blanc
 
-    // Utilisation d'une symétrie verticale
-    bool symetrieVerticale = false;
-
-    std::vector<unsigned char> image;
+    vector<unsigned char> image;
+    unsigned int hauteurBis = hauteur;
+    
     if (symetrieVerticale){
-        hauteur = (hauteur/2)*2;
+        hauteur = (hauteur/2)*2; // pour s'assurer d'un nombre pair
         origine.imag(0.);
+        origine = origine + complex<double>(0,hauteur) * (echelle/4.0);
+        hauteurBis = hauteur/2;
+    }
+    
+    image.resize(longueur * hauteur * 4);
+    vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteurBis, echelle, origine);
 
-        complex<double> origineBis = origine + complex<double>(0,hauteur) * (echelle/4.0);
-        unsigned int hauteurBis = hauteur/2;
-
-        std::vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteurBis, echelle, origineBis);
-
-        image.resize(longueur * hauteur * 4);
-
-        for (unsigned int y = 0; y < hauteurBis; y++) {
+    for (unsigned int y = 0; y < hauteurBis; y++)
+        remplitImage(&image, matrice, y, longueur, peindreEnBlanc);
+    
+    if (symetrieVerticale){
+        for (unsigned int y = 0; y < hauteurBis; y++)
             for (unsigned int x = 0; x < longueur; x++) {
-                vector<double> couleur = coloration(matrice[y*longueur+x], makeW);
-                for (unsigned int k = 0; k < 3; k++) {
-                    image[4 * (y * longueur + x) + k] = couleur[k];
+                vector<double> couleur = coloration(matrice[y*longueur+x], peindreEnBlanc);
+                for (unsigned int k = 0; k < 3; k++)
                     image[4 * ((hauteur-1 - y) * longueur + x) + k] = couleur[k];
-                }
-                image[4 * (y * longueur + x) + 3] = 255;
                 image[4 * ((hauteur-1 - y) * longueur + x) + 3] = 255;
             }
-        }
     }
-    else{
-        std::vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteur, echelle, origine);
 
-        image.resize(longueur * hauteur * 4);
-
-        for (unsigned int y = 0; y < hauteur; y++) {
-            for (unsigned int x = 0; x < longueur; x++) {
-                vector<double> couleur = coloration(matrice[y*longueur+x], makeW);
-                image[4 * (y * longueur + x) + 0] = couleur[0];
-                image[4 * (y * longueur + x) + 1] = couleur[1];
-                image[4 * (y * longueur + x) + 2] = couleur[2];
-                image[4 * (y * longueur + x) + 3] = 255;
-            }
-        }
-    }
-    string filename;
-    if (argc > 1)
-        filename = argv[1];
-    else
-        filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
+    string filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
+    //if (argc > 1)
+    //    filename = argv[1];
+    //else
+    //    filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
     lodepng::encode(filename, image, longueur, hauteur);
+
     //*/ // =====
 
 
@@ -194,9 +188,9 @@ int main(int argc, char** argv){
 			}
 			if (estJulia && Keyboard::isKeyPressed(Keyboard::C)) {
 				moteurDesCycles.chercheANouveau(origine, echelle);
-				std::vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
-				function<complex<double>(Homogene)> dyn = [methode, borne, cycles](Homogene point){
-					Julia julia(methode, borne, cycles);
+				vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
+				function<complex<double>(Homogene)> dyn = [fonction, borne, cycles](Homogene point){
+					Julia julia(fonction, borne, cycles);
 					return julia.convergenceDe(point);
 				};
 				dynamicien.dynamique = dyn;
@@ -224,7 +218,7 @@ int main(int argc, char** argv){
 		if (remake) {
 			tab.clear();
 
-			dynamicien.peindreEnBlanc = makeW;
+            dynamicien.peindreEnBlanc = peindreEnBlanc;
 			dynamicien.borneDIteration = borne;
 
 
@@ -232,8 +226,8 @@ int main(int argc, char** argv){
 
 			//  Julia
 			if (estJulia) {
-				dyn = [methode, borne, cycles](Homogene point){
-					Julia julia(methode, borne, cycles);
+				dyn = [fonction, borne, cycles](Homogene point){
+					Julia julia(fonction, borne, cycles);
 					return julia.convergenceDe(point);
 				};
 			}

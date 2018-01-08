@@ -31,39 +31,39 @@ struct Polynome {
 
 
 	Polynome();
-	Polynome(std::vector<complex<double>> coefficientsDuPolynome);
-	Polynome(complex<double> constante);
+	Polynome(const std::vector<complex<double>> &coefficientsDuPolynome);
+	Polynome(const complex<double> &constante);
 
 	void print();
 	complex<double> coefficientDIndice(unsigned int i);
 
 
 	Polynome additionAvec(Polynome polynome);
-	Polynome multiplicationAvec(complex<double> scalaire);
+	Polynome multiplicationAvec(const complex<double> &scalaire);
 	Polynome multiplicationAvec(Polynome polynome);
 
-	complex<double> evaluationAuPoint(complex<double> point);
+	complex<double> evaluationAuPoint(const complex<double> &point);
 
 	Polynome polynomeDerive();
-	Polynome polynomeDeriveNeme(unsigned int n);
+	Polynome polynomeDeriveNeme(const unsigned int &n);
 
 };
 
-Polynome operator+(Polynome A, Polynome B);
-Polynome operator+(Polynome A, complex<double> B);
-Polynome operator+(Polynome A, double B);
+Polynome operator+(Polynome A, const Polynome &B);
+Polynome operator+(const Polynome &A, const complex<double> &B);
+Polynome operator+(const Polynome &A, const double &B);
 
-Polynome operator*(Polynome A, Polynome B);
-Polynome operator*(Polynome A, complex<double> B);
-Polynome operator*(Polynome A, double B);
+Polynome operator*(Polynome A, const Polynome &B);
+Polynome operator*(Polynome A, const complex<double> &B);
+Polynome operator*(Polynome A, const double &B);
 
-Polynome operator/(Polynome A, complex<double> B);
-Polynome operator/(Polynome A, double B);
+Polynome operator/(const Polynome &A, const complex<double> &B);
+Polynome operator/(const Polynome &A, const double &B);
 
-Polynome operator-(Polynome A);
-Polynome operator-(Polynome A, Polynome B);
-Polynome operator-(Polynome A, complex<double> B);
-Polynome operator-(Polynome A, double B);
+Polynome operator-(const Polynome &A);
+Polynome operator-(const Polynome &A, const Polynome &B);
+Polynome operator-(const Polynome &A, const complex<double> &B);
+Polynome operator-(const Polynome &A, const double &B);
 
 
 // --------------------------------
@@ -78,12 +78,11 @@ struct Homogene {
 
 	void print();
 
-
 	Homogene();
-	Homogene(complex<double> a, complex<double> b);
-	Homogene(complex<double> a);
-	Homogene(double a, double b);
-	Homogene(double a);
+	Homogene(const complex<double> &a, const complex<double> &b);
+	Homogene(const complex<double> &a);
+	Homogene(const double &a, const double &b);
+	Homogene(const double &a);
 
 	complex<double> carteY();
 	complex<double> carteX();
@@ -105,8 +104,8 @@ struct FractionRationnelle {
 	std::function<Homogene(Homogene)> fonctionRationnelle;
 
 	FractionRationnelle();
-	FractionRationnelle(Polynome numerateur);
-	FractionRationnelle(Polynome numerateur, Polynome denominateur);
+	FractionRationnelle(const Polynome &numerateur);
+	FractionRationnelle(const Polynome &numerateur, const Polynome &denominateur);
 };
 
 Homogene evaluationAuPoint(Polynome numerateur, Polynome denominateur, Homogene point);
