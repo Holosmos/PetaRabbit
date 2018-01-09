@@ -26,14 +26,14 @@ function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
 #include <cmath>
 #include <complex>
 
+#include "Parametres.h"
+
 #include "Algebre.h"
 #include "Cycle.h"
 
 struct Julia {
     Julia(const std::function<Homogene (Homogene)> &fonction, const unsigned int &borne, std::vector<Homogene> *cycles): fonctionIteree(fonction), borneDIteration(borne), cyclesAttractifs(cycles) {};
 
-    const Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
-    const double parametreConvergence = 0.0005;
     unsigned int borneDIteration;
 
 	std::function<Homogene (Homogene)> fonctionIteree;

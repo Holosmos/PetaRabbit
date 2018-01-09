@@ -7,15 +7,11 @@
 #include "Algebre.h"
 #include <complex>
 
+#include "Parametres.h"
+
 class Cycle {
 	std::function<Homogene(Homogene)> fonctionIteree;
     std::vector<Homogene>* cyclesAttractifs;
-
-	const double c_eps = 0.00005;
-    const unsigned int c_borne = 100;
-    const double parametreDistance = 0.005;
-    const Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
-    const Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0));
 
 	bool donneUnCycle(Homogene z0);
 	Homogene c_point = Homogene(0.0);

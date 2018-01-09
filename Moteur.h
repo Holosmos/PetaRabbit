@@ -16,10 +16,10 @@
 #include "Mandelbrot.h"
 
 
-FractionRationnelle exemple(unsigned int j);
-
 void remplitImage(std::vector<unsigned char> *image, const std::vector<std::complex<double>> &matrice, const unsigned int &y, const unsigned int &longueur, const bool &peindreEnBlanc);
 
 std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc);
+
+vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &longueur, complex<double> &origine, const double &echelle, const bool &peindreEnBlanc, const bool &symetrieVerticale, Dynamicien &dynamicien);
 
 #endif /* Moteur_h */

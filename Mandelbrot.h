@@ -31,12 +31,11 @@
 #include <complex>
 
 #include "Algebre.h"
+#include "Parametres.h"
 
 
 struct Mandelbrot {
     Mandelbrot(const unsigned int &borne): borneDIteration(borne){};
-
-	const double parametreConvergence = 0.000001;
 
 	unsigned int borneDIteration;
 

@@ -65,12 +65,12 @@ void Cycle::calculeLesCyclesAttractifs(){
 		if (cycleZ0.x != pointDefaut.x || cycleZ0.y != pointDefaut.y) {
 			if (nEstPasDejaUnCycle(cycleZ0)){ // vérifie que le cycle n'est pas déjà existant dans la liste
 				cyclesAttractifs->push_back(cycleZ0);
-				cycleZ0.print();
+				//cycleZ0.print();
 			}
 		}
 
 	}
-	cout << cyclesAttractifs->size() << endl;
+	//cout << cyclesAttractifs->size() << endl;
 }
 
 bool Cycle::nEstPasDejaUnCycle(const Homogene &point){

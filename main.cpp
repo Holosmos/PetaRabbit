@@ -8,6 +8,8 @@
 using namespace sf;
 using namespace std;
 
+#include "Parametres.h"
+
 // Premier axe
 
 #include "Algebre.h"
@@ -26,36 +28,27 @@ using namespace std;
 
 
 int main(int argc, char** argv){
-    
-    // Taille de la simulation
+
+    // == Paramètres simulation
     
     double scale = 0.5;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
-	unsigned int hauteur = scale*1080 ; //
-	unsigned int longueur =  scale*1920 ;
+    unsigned int hauteur = scale*1080 ;
+    unsigned int longueur =  scale*1920 ;
+    
+    double echelle = 0.00215 / scale ;
+    double o_x = 0.0, o_y=0.0;
+    complex<double> origine(o_x,o_y);
 
-	// Paramètres de la fenêtre de simulation
+    unsigned int borne = 100;
 
-	double echelle = 0.00215 / scale ;
-	double o_x = 0.0, o_y=0.0;
-	complex<double> origine(o_x,o_y);
-
-	int borne = 100;
-	bool peindreEnBlanc = false;
-
-    // Préparation du moteur de la dynamique
+    // == Préparation du moteur de la dynamique
 
 	Dynamicien dynamicien(borne, peindreEnBlanc);
 	function<complex<double>(Homogene)> dyn;
 
-	bool estJulia = true;
-	bool estMandelbrot = !estJulia;
+    // == Préparation de la fonction qui sera utilisée
 
-    bool symetrieVerticale = false;
-
-    // Préparation de la fonction qui sera utilisée
-
-    FractionRationnelle frac = exemple(0);
-    function<Homogene(Homogene)> fonction = frac.fonctionRationnelle;
+    function<Homogene(Homogene)> fonction = fracJulia.fonctionRationnelle;
 
 	// Cas d'un Julia
     vector<Homogene>* cycles = new vector<Homogene>;
@@ -77,34 +70,10 @@ int main(int argc, char** argv){
 
     dynamicien.dynamique = dyn;
 
-    // ===== Fabrication de l'image seule et en noir&blanc
+    // ===== Fabrication de l'image seule =====
 
-    vector<unsigned char> image;
-    unsigned int hauteurBis = hauteur;
+    vector<unsigned char> image = faireImage(hauteur, longueur, origine, echelle, peindreEnBlanc, symetrieVerticale, dynamicien);
     
-    if (symetrieVerticale){
-        hauteur = (hauteur/2)*2; // pour s'assurer d'un nombre pair
-        origine.imag(0.);
-        origine = origine + complex<double>(0,hauteur) * (echelle/4.0);
-        hauteurBis = hauteur/2;
-    }
-    
-    image.resize(longueur * hauteur * 4);
-    vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteurBis, echelle, origine);
-
-    for (unsigned int y = 0; y < hauteurBis; y++)
-        remplitImage(&image, matrice, y, longueur, peindreEnBlanc);
-    
-    if (symetrieVerticale){
-        for (unsigned int y = 0; y < hauteurBis; y++)
-            for (unsigned int x = 0; x < longueur; x++) {
-                vector<double> couleur = coloration(matrice[y*longueur+x], peindreEnBlanc);
-                for (unsigned int k = 0; k < 3; k++)
-                    image[4 * ((hauteur-1 - y) * longueur + x) + k] = couleur[k];
-                image[4 * ((hauteur-1 - y) * longueur + x) + 3] = 255;
-            }
-    }
-
     string filename;
     if (argc > 1)
         filename = argv[1];
@@ -115,12 +84,11 @@ int main(int argc, char** argv){
     //*/ // =====
 
 
-	/*/ ==== Gestion de la fenêtre et des interactions avec l'utilisateur
+	/*/ ===== Gestion de la fenêtre et des interactions avec l'utilisateur =====
 
     // Création de la fenêtre
 
     RenderWindow window(VideoMode(longueur, hauteur), "Simulation Julia");
-
     window.setFramerateLimit(5);
 
     bool remakeSize = false, remake = false;
@@ -136,10 +104,9 @@ int main(int argc, char** argv){
 			if (event.type == Event::Closed){
 				window.close();
 			}
-
 			if (event.type == Event::Resized){
 				remakeSize = true;
-			}
+            }
 
 			if (Keyboard::isKeyPressed(Keyboard::Up)) {
 				echelle /= 1.3;
@@ -157,7 +124,6 @@ int main(int argc, char** argv){
 				borne -= (int) (borne*1.0/4);
 				remake = true;
 			}
-
 			if (Keyboard::isKeyPressed(Keyboard::Z)) {
 				o_y += 10*echelle;
 				origine = complex<double>(o_x,o_y);
@@ -178,23 +144,8 @@ int main(int argc, char** argv){
 				origine = complex<double>(o_x,o_y);
 				remake = true;
 			}
-			if (Keyboard::isKeyPressed(Keyboard::W)) {
-				dynamicien.peindreEnBlanc = true;
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::X)) {
-				dynamicien.peindreEnBlanc = false;
-				remake = true;
-			}
 			if (estJulia && Keyboard::isKeyPressed(Keyboard::C)) {
 				moteurDesCycles.chercheANouveau(origine, echelle);
-				vector<Homogene>* cycles = moteurDesCycles.getCyclesAttractifs();
-				function<complex<double>(Homogene)> dyn = [fonction, borne, cycles](Homogene point){
-					Julia julia(fonction, borne, cycles);
-					return julia.convergenceDe(point);
-				};
-				dynamicien.dynamique = dyn;
-
 				remake = true;
 			}
 
@@ -221,29 +172,17 @@ int main(int argc, char** argv){
             dynamicien.peindreEnBlanc = peindreEnBlanc;
 			dynamicien.borneDIteration = borne;
 
-
 			// Selectionner selon la dynamique
 
 			//  Julia
-			if (estJulia) {
-				dyn = [fonction, borne, cycles](Homogene point){
-					Julia julia(fonction, borne, cycles);
-					return julia.convergenceDe(point);
-				};
-			}
+			if (estJulia)
+                julia.borneDIteration = borne;
 
 			//  Mandelbrot
-			if (estMandelbrot) {
-				dyn = [borne](Homogene point){
-					Mandelbrot mandel;
-					mandel.borneDIteration = borne;
-					return mandel.convergencePourParametre(point.carteY());
-				};
-			}
-			dynamicien.dynamique = dyn;
+			if (estMandelbrot)
+                mandel.borneDIteration = borne;
 
 			tab = dynamicien.creeLaMatriceWin(longueur, hauteur, echelle, origine);
-
 			remake = false;
 		}
 
@@ -252,7 +191,6 @@ int main(int argc, char** argv){
 		window.draw(tab);
 
 		window.display();
-
 	}
  //*/
 	return 0;

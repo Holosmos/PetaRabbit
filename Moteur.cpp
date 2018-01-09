@@ -8,69 +8,6 @@
 
 #include "Moteur.h"
 
-FractionRationnelle exemple(unsigned int j){
-    vector<complex<double>> p1;
-    vector<complex<double>> p2;
-    complex<double> i(0.0,1.0);
-    switch (j) {
-        case 0:
-            p1 = vector<complex<double>>(3,0.*i);    // LAPIN
-            p1[2] = 1. + 0.*i;
-            p1[0] = -0.123 + 0.745*i;
-            p2 = vector<complex<double>>(1,1. + 0.*i);
-            break;
-        case 1:
-            p1 = vector<complex<double>>(3,0.*i);  // COLLIER
-            p1[2] = 1. + 0.*i;
-            p1[0] = -1. + 0.*i;
-            p2 = vector<complex<double>>(3,0.*i);
-            p2[2] = 1. + 0.*i;
-            break;
-        case 2:
-            p1 =  vector<complex<double>>(3,0.*i); // GALAXIE
-            p1[2] = -0.138 + 0.*i;
-            p1[1] = -0.303 + 0.*i;
-            p1[0] = -0.138 + 0.*i;
-            p2 = vector<complex<double>>(2,0.*i);
-            p2[1] = 1. +0.*i;
-            break;
-        case 3:
-            p1 = vector<complex<double>>(3,0.*i); // STRANGE
-            p1[2] = 1. + 0.*i;
-            p1[0] = -0.8 + 0.*i;
-            p2 = vector<complex<double>>(1,1. +0.*i);
-            break;
-        case 4:
-            p1 = vector<complex<double>>(4,0.*i);  // NEWTON
-            p1[3] = 2. + 0.*i;
-            p1[0] = -2. + 0.*i;
-            p2 = vector<complex<double>>(3,0.*i);
-            p2[2] = 3. + 0.*i;
-            p2[0] = -2. + 0.*i;
-            break;
-        case 5:
-            p1 = vector<complex<double>>(26,0.*i);   // PENTAGONE
-            p1[25] = 87. + 0.*i;
-            p1[20] = -3335. + 0.*i;
-            p1[10] = -6670. + 0.*i;
-            p1[5] = -435. + 0.*i;
-            p1[0] = 1. + 0.*i;
-            p2 = vector<complex<double>>(30,0.*i);
-            p2[29] = -1. + 0.*i;
-            p2[24] = -435. + 0.*i;
-            p2[19] = 6670. + 0.*i;
-            p2[9] = 3335. + 0.*i;
-            p2[4]  = 87. + 0.*i;
-            break;
-        default:
-            break;
-    }
-    
-    Polynome nume(p1), deno(p2);
-    return FractionRationnelle(nume,deno);
-}
-
-
 void remplitImage(std::vector<unsigned char> *image, const std::vector<std::complex<double>> &matrice, const unsigned int &y, const unsigned int &longueur, const bool &peindreEnBlanc){
     for (unsigned int x = 0; x < longueur; x++) {
         std::vector<double> couleur = coloration(matrice[y*longueur+x], peindreEnBlanc);
@@ -110,4 +47,33 @@ std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc){
         
     }
     return couleurObtenue;
+}
+
+vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &longueur, complex<double> &origine, const double &echelle, const bool &peindreEnBlanc, const bool &symetrieVerticale, Dynamicien &dynamicien){
+    vector<unsigned char> image;
+    unsigned int hauteurBis = hauteur;
+    
+    if (symetrieVerticale){
+        hauteur = (hauteur/2)*2; // pour s'assurer d'un nombre pair
+        origine.imag(0.);
+        origine = origine + complex<double>(0,hauteur) * (echelle/4.0);
+        hauteurBis = hauteur/2;
+    }
+    
+    image.resize(longueur * hauteur * 4);
+    vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteurBis, echelle, origine);
+    
+    for (unsigned int y = 0; y < hauteurBis; y++)
+        remplitImage(&image, matrice, y, longueur, peindreEnBlanc);
+    
+    if (symetrieVerticale){
+        for (unsigned int y = 0; y < hauteurBis; y++)
+            for (unsigned int x = 0; x < longueur; x++) {
+                vector<double> couleur = coloration(matrice[y*longueur+x], peindreEnBlanc);
+                for (unsigned int k = 0; k < 3; k++)
+                    image[4 * ((hauteur-1 - y) * longueur + x) + k] = couleur[k];
+                image[4 * ((hauteur-1 - y) * longueur + x) + 3] = 255;
+            }
+    }
+    return image;
 }

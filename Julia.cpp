@@ -13,7 +13,7 @@ complex<double> Julia::convergenceDe(Homogene z){
 	for (unsigned int j = 0; j <= borneDIteration; j++){
 		for (unsigned int k = 0; k < cyclesAttractifs->size(); k++) {
 			Homogene cycle = (*cyclesAttractifs)[k];
-			if (cycle.distanceAvec(z) < parametreConvergence) {
+			if (cycle.distanceAvec(z) < finesseConvergence) {
 				return complex<double>(j,k+1); // correspond au message : j itérées, proche du cycle k
 			}
 		}
@@ -29,10 +29,10 @@ complex<double> Julia::convergenceDe(Homogene z){
 
 	if ((cycle.x != pointDefaut.x || cycle.y != pointDefaut.y)) {
 		cyclesAttractifs->push_back(cycle);
-		cout << "+1 spé";
-		cycle.print();
+		//cout << "+1 spé";
+		//cycle.print();
 		for (int j = 0; j<= borneDIteration ; j++) {
-			if ( copie.distanceAvec(cycle) < parametreConvergence) {
+			if ( copie.distanceAvec(cycle) < finesseConvergence) {
 				return complex<double>(j, cyclesAttractifs->size());
 			}
 			copie = fonctionIteree(copie);
