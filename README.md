@@ -1,4 +1,4 @@
-# pentaRabbit
+# PetaRabbit
 
 Pour compiler :
 
