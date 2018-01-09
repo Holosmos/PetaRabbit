@@ -9,39 +9,27 @@
 
 class Cycle {
 	std::function<Homogene(Homogene)> fonctionIteree;
-	
-	double c_eps = 0.00005;
-	
+    std::vector<Homogene>* cyclesAttractifs;
+
+	const double c_eps = 0.00005;
+    const unsigned int c_borne = 100;
+    const double parametreDistance = 0.005;
+    const Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
+    const Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0));
+
 	bool donneUnCycle(Homogene z0);
-
 	Homogene c_point = Homogene(0.0);
-	Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
-	Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0));
-	
 
-	bool nEstPasDejaUnCycle(Homogene point, double parametreDistance = 0.005);
-	
-	std::vector<Homogene> cyclesAttractifs;
-	void calculeLesCyclesAttractifs();
-	bool premiereRechercheEffectuee = false;
-	
+	bool nEstPasDejaUnCycle(const Homogene &point);
+
 public:
 	
-	Cycle(const std::function<Homogene (Homogene)> &fonctionAIterer):fonctionIteree(fonctionAIterer){};
-	
-	int c_borne = 100;
-	
-	void eps(double eps){c_eps = eps;}
-	double eps(){return c_eps;}
-	
-	void borne(int borne){c_borne = borne;}
-	int borne(){return c_borne;}
-	
-	std::vector<Homogene>* getCyclesAttractifs();
-	
-	Homogene chercheUnCycleAuPoint(Homogene z0, Homogene pointParDefaut);
+	Cycle(const std::function<Homogene (Homogene)> &fonctionAIterer, std::vector<Homogene> *cycles):fonctionIteree(fonctionAIterer), cyclesAttractifs(cycles){};
 
-	void chercheANouveau(complex<double> origine, double echelle);
+	void calculeLesCyclesAttractifs();
+
+	Homogene chercheUnCycleAuPoint(Homogene z0);
+	void chercheANouveau(const complex<double> &origine, const double &echelle);
 };
 
 #endif /* defined(__Simulation__Cycle__) */

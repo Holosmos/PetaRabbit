@@ -2,14 +2,6 @@
 
 using namespace std;
 
-std::vector<Homogene>* Cycle::getCyclesAttractifs(){
-	if (!premiereRechercheEffectuee){
-		calculeLesCyclesAttractifs();
-		premiereRechercheEffectuee = true;
-	}
-	return &cyclesAttractifs;
-}
-
 
 bool Cycle::donneUnCycle(Homogene z0){
 	
@@ -40,58 +32,56 @@ bool Cycle::donneUnCycle(Homogene z0){
 	return false;
 }
 
-Homogene Cycle::chercheUnCycleAuPoint(Homogene z0, Homogene pointParDefaut){
+Homogene Cycle::chercheUnCycleAuPoint(Homogene z0){
 	if (donneUnCycle(z0)) {
 		return c_point;
 	}
-	return pointParDefaut;
+	return pointDefaut;
 }
 
 void Cycle::calculeLesCyclesAttractifs(){
 	srand (static_cast <unsigned> (time(0)));
-	
-	cyclesAttractifs = vector<Homogene>(0);
-	
-	
+
+
 	// Etude du point à l'infini
-	Homogene cycleInfini = chercheUnCycleAuPoint(pointInfini, pointDefaut); // Tente le cycle à l'infini
-	
+	Homogene cycleInfini = chercheUnCycleAuPoint(pointInfini); // Tente le cycle à l'infini
+
 	if (cycleInfini.x != pointDefaut.x || cycleInfini.y != pointDefaut.y) { // Regarde si on récupère un cycle ou le point par défaut
-		cyclesAttractifs.push_back(cycleInfini);
+		cyclesAttractifs->push_back(cycleInfini);
 	}
-	
+
 	// Tirage de quelques points
 	unsigned int nombreDeTirages = 200;
-	
+
 	for (int j =1; j<= nombreDeTirages; j++) {
-		
+
 		complex<double> z((((rand()%2==0)?-1:1)*rand()%45678)/45678.*j/10.,
 				   (((rand()%2==0)?-1:1)*rand()%45678)/45678.*j/10.);
-		
+
 		Homogene z0(z);
-		
-		Homogene cycleZ0 = chercheUnCycleAuPoint(z0, pointDefaut);
-		
+
+		Homogene cycleZ0 = chercheUnCycleAuPoint(z0);
+
 		if (cycleZ0.x != pointDefaut.x || cycleZ0.y != pointDefaut.y) {
 			if (nEstPasDejaUnCycle(cycleZ0)){ // vérifie que le cycle n'est pas déjà existant dans la liste
-				cyclesAttractifs.push_back(cycleZ0);
+				cyclesAttractifs->push_back(cycleZ0);
 				cycleZ0.print();
 			}
 		}
-		
+
 	}
-	cout << cyclesAttractifs.size() << endl;
+	cout << cyclesAttractifs->size() << endl;
 }
 
-bool Cycle::nEstPasDejaUnCycle(Homogene point, double parametreDistance){
+bool Cycle::nEstPasDejaUnCycle(const Homogene &point){
 	
 	// Vérification que le cycle n'est pas déjà répertorié
 	
-	unsigned long nombreDeCycles = cyclesAttractifs.size();
+	unsigned long nombreDeCycles = cyclesAttractifs->size();
 	
 	for (int j = 0; j < nombreDeCycles; j++) {
 		
-		Homogene cycle = cyclesAttractifs[j];
+		Homogene cycle = (*cyclesAttractifs)[j];
 		Homogene copie = point;
 		
 		if (copie.distanceAvec(cycle) < parametreDistance) {
@@ -115,7 +105,7 @@ bool Cycle::nEstPasDejaUnCycle(Homogene point, double parametreDistance){
 	return true;
 }
 
-void Cycle::chercheANouveau(complex<double> origine, double echelle){
+void Cycle::chercheANouveau(const complex<double> &origine, const double &echelle){
 	 
 	 // Recherche plus ciblée de cycles
 	 unsigned int nombreTirages = 100;
@@ -126,14 +116,14 @@ void Cycle::chercheANouveau(complex<double> origine, double echelle){
 		 z = z + origine;
 		 
 		 Homogene z0(z);
-		 Homogene cycleZ0 = chercheUnCycleAuPoint(z0, pointDefaut);
+		 Homogene cycleZ0 = chercheUnCycleAuPoint(z0);
 		 
 		 if (cycleZ0.x != pointDefaut.x || cycleZ0.y != pointDefaut.y) {
 			 if (nEstPasDejaUnCycle(cycleZ0)){ // vérifie que le cycle n'est pas déjà existant dans la liste
-				 cyclesAttractifs.push_back(cycleZ0);
+				 cyclesAttractifs->push_back(cycleZ0);
 				 cycleZ0.print();
 			 }
 		 }
 	 }
-	 cout << cyclesAttractifs.size() << endl;
+	 cout << cyclesAttractifs->size() << endl;
  }

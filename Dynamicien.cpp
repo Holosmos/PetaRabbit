@@ -16,7 +16,7 @@ void calculeLigneW(int y,
 				  int longueur, int hauteur,
 				  double echelle, complex<double> origine,
 				  int borneDIteration, bool peindreEnBlanc,
-				  function<complex<double>(Homogene)>* convergenceDe,
+				  function<complex<double>(Homogene)> convergenceDe,
 				  VertexArray *ligne){
 
 
@@ -30,7 +30,7 @@ void calculeLigneW(int y,
 		// Calculs sur la convergence du point
 
 		Homogene z(z0,complex<double>(1,0));
-		complex<double> resultatConvergence = (*convergenceDe)(z);
+		complex<double> resultatConvergence = convergenceDe(z);
 		int nombreIteree = resultatConvergence.real();
 
 		// Coloration en fonction du nombre d'itérées
@@ -97,15 +97,15 @@ VertexArray Dynamicien::creeLaMatriceWin(int longueur, int hauteur, double echel
 }
 
 
-void calculeLigne(int y,
-                  int longueur, int hauteur,
-                  double echelle, complex<double> origine,
-                  int borneDIteration,
-                  function<complex<double>(Homogene)>* convergenceDe,
+void calculeLigne(const unsigned int &y,
+                  const unsigned int &longueur, const unsigned int &hauteur,
+                  const double &echelle, const complex<double> &origine,
+                  const unsigned int &borneDIteration,
+                  const function<complex<double>(Homogene)> &convergenceDe,
                   std::vector<complex<double>> *ligne){
 
 
-    for (int j = 0; j< longueur ; j++){
+    for (unsigned int j = 0; j< longueur ; j++){
 
         // Calculs des coordonnées du pixel choisi
 
@@ -115,12 +115,12 @@ void calculeLigne(int y,
         // Calculs sur la convergence du point
 
         Homogene z(z0,complex<double>(1,0));
-        complex<double> resultatConvergence = (*convergenceDe)(z);
-        int nombreIteree = resultatConvergence.real();
+        complex<double> resultatConvergence = convergenceDe(z);
+        unsigned int nombreIteree = resultatConvergence.real();
 
         // Coloration en fonction du nombre d'itérées
 
-        int couleur = 255 - ((nombreIteree>=35) ?
+        unsigned int couleur = 255 - ((nombreIteree>=35) ?
                              (137 + (int)(0.5 + nombreIteree*1.0 / borneDIteration*118))
                              : nombreIteree * 4);  // formule maison pour une harmonie
 

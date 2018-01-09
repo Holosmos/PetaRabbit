@@ -28,8 +28,7 @@ struct Dynamicien {
     
 	unsigned int borneDIteration;
     bool peindreEnBlanc;
-	std::function<complex<double>(Homogene)>* dynamique;
-
+	std::function<complex<double>(Homogene)> dynamique;
     std::vector<complex<double>> creeLaMatrice(int longueur, int hauteur, double echelle, complex<double> origine);
 
 

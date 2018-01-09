@@ -34,14 +34,13 @@
 
 
 struct Mandelbrot {
-
     Mandelbrot(const unsigned int &borne): borneDIteration(borne){};
 
-	double parametreConvergence = 0.000001;
-	unsigned int borneDIteration;
-	
-    std::complex<double> convergencePourParametre(std::complex<double> c);
+	const double parametreConvergence = 0.000001;
 
+	unsigned int borneDIteration;
+
+    std::complex<double> convergencePourParametre(std::complex<double> c);
 };
 
 #endif /* Mandelbrot_h */

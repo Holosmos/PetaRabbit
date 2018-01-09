@@ -4,7 +4,7 @@ using namespace std;
 
 // Test de convergence des itérées
 
-complex<double> Julia::convergenceDe(Homogene z, double parametreConvergence){
+complex<double> Julia::convergenceDe(Homogene z){
 
 	// Etude de la convergence d'un point donné
 
@@ -24,8 +24,8 @@ complex<double> Julia::convergenceDe(Homogene z, double parametreConvergence){
 	// À activer selon les cas, peut allonger la durer d'execution.
 	//
 
-	Cycle moteurDesCycles(fonctionIteree);
-	Homogene cycle = moteurDesCycles.chercheUnCycleAuPoint(z, pointDefaut);
+	Cycle moteurDesCycles(fonctionIteree, cyclesAttractifs);
+	Homogene cycle = moteurDesCycles.chercheUnCycleAuPoint(z);
 
 	if ((cycle.x != pointDefaut.x || cycle.y != pointDefaut.y)) {
 		cyclesAttractifs->push_back(cycle);

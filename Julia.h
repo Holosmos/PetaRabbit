@@ -32,13 +32,14 @@ function<Complexe(Homogene)> dyn = [methode, borne, cycles](Homogene point){
 struct Julia {
     Julia(const std::function<Homogene (Homogene)> &fonction, const unsigned int &borne, std::vector<Homogene> *cycles): fonctionIteree(fonction), borneDIteration(borne), cyclesAttractifs(cycles) {};
 
-	const std::function<Homogene (Homogene)> fonctionIteree;
+    const Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
+    const double parametreConvergence = 0.0005;
     unsigned int borneDIteration;
+
+	std::function<Homogene (Homogene)> fonctionIteree;
     std::vector<Homogene> *cyclesAttractifs;
 
-	Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
-
-	complex<double> convergenceDe(Homogene z, double parametreConvergence = 0.0005);
+	complex<double> convergenceDe(Homogene z);
 };
 
 

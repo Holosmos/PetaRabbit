@@ -29,7 +29,7 @@ int main(int argc, char** argv){
     
     // Taille de la simulation
     
-    double scale = .5;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
+    double scale = 0.5;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
 	unsigned int hauteur = scale*1080 ; //
 	unsigned int longueur =  scale*1920 ;
 
@@ -42,11 +42,6 @@ int main(int argc, char** argv){
 	int borne = 100;
 	bool peindreEnBlanc = false;
 
-	// Préparation de la fonction qui sera utilisée
-
-	FractionRationnelle frac = exemple(0);
-	function<Homogene(Homogene)> fonction = frac.fonctionRationnelle;
-
     // Préparation du moteur de la dynamique
 
 	Dynamicien dynamicien(borne, peindreEnBlanc);
@@ -57,25 +52,30 @@ int main(int argc, char** argv){
 
     bool symetrieVerticale = false;
 
+    // Préparation de la fonction qui sera utilisée
+
+    FractionRationnelle frac = exemple(0);
+    function<Homogene(Homogene)> fonction = frac.fonctionRationnelle;
+
 	// Cas d'un Julia
-    Cycle moteurDesCycles(fonction);
-    vector<Homogene>* cycles;
+    vector<Homogene>* cycles = new vector<Homogene>;
+    Cycle moteurDesCycles(fonction, cycles);
+    Julia julia(fonction, borne, cycles);
 	if (estJulia) {
-		cycles = moteurDesCycles.getCyclesAttractifs();
-		dyn = [&fonction, &borne, cycles](Homogene point){
-            Julia julia(fonction, borne, cycles);
+        moteurDesCycles.calculeLesCyclesAttractifs();
+		dyn = [&julia](Homogene point){
 			return julia.convergenceDe(point);
 		};
 	}
 	// Cas d'un Mandelbrot
+    Mandelbrot mandel(borne);
 	if (estMandelbrot) {
-        Mandelbrot mandel(borne);
 		dyn = [&mandel](Homogene point){
 			return mandel.convergencePourParametre(point.carteY());
 		};
 	}
 
-    dynamicien.dynamique = &dyn;
+    dynamicien.dynamique = dyn;
 
     // ===== Fabrication de l'image seule et en noir&blanc
 
