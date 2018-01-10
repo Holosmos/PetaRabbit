@@ -46,6 +46,10 @@ const Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0))
 
 // Propre à Cycles
 
+const bool rechercheProfondeDansJulia = false;
+
+const bool affichageDesCycles = false;
+
 const double c_eps = 0.00005;
 const unsigned int c_borne = 100;
 const double parametreDistance = 0.005;

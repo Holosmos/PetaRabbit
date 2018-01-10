@@ -21,25 +21,24 @@ complex<double> Julia::convergenceDe(Homogene z){
 	}
 
 	// Recherche d'un cycle en cas de non convergence
-	/*/ À activer selon les cas, peut allonger la durer d'execution.
-	//
+	// À activer selon les cas, peut allonger la durer d'execution.
 
-	Cycle moteurDesCycles(fonctionIteree, cyclesAttractifs);
-	Homogene cycle = moteurDesCycles.chercheUnCycleAuPoint(z);
-
-	if ((cycle.x != pointDefaut.x || cycle.y != pointDefaut.y)) {
-		cyclesAttractifs->push_back(cycle);
-		//cout << "+1 spé";
-		//cycle.print();
-		for (int j = 0; j<= borneDIteration ; j++) {
-			if ( copie.distanceAvec(cycle) < finesseConvergence) {
-				return complex<double>(j, cyclesAttractifs->size());
-			}
-			copie = fonctionIteree(copie);
-		}
-	}
-
-	//*/
+    if (rechercheProfondeDansJulia){
+        Cycle moteurDesCycles(fonctionIteree, cyclesAttractifs);
+        Homogene cycle = moteurDesCycles.chercheUnCycleAuPoint(z);
+        
+        if ((cycle.x != pointDefaut.x || cycle.y != pointDefaut.y)) {
+            cyclesAttractifs->push_back(cycle);
+            //cout << "+1 spé";
+            //cycle.print();
+            for (int j = 0; j<= borneDIteration ; j++) {
+                if ( copie.distanceAvec(cycle) < finesseConvergence) {
+                    return complex<double>(j, cyclesAttractifs->size());
+                }
+                copie = fonctionIteree(copie);
+            }
+        }
+    }
 
 	return complex<double>(borneDIteration); // renvoie le message qu'il n'y a pas eu de convergence
 }

@@ -65,12 +65,14 @@ void Cycle::calculeLesCyclesAttractifs(){
 		if (cycleZ0.x != pointDefaut.x || cycleZ0.y != pointDefaut.y) {
 			if (nEstPasDejaUnCycle(cycleZ0)){ // vérifie que le cycle n'est pas déjà existant dans la liste
 				cyclesAttractifs->push_back(cycleZ0);
-				//cycleZ0.print();
+				if (affichageDesCycles)
+                    cycleZ0.print();
 			}
 		}
 
 	}
-	//cout << cyclesAttractifs->size() << endl;
+    if (affichageDesCycles)
+        cout << cyclesAttractifs->size() << endl;
 }
 
 bool Cycle::nEstPasDejaUnCycle(const Homogene &point){
@@ -121,9 +123,11 @@ void Cycle::chercheANouveau(const complex<double> &origine, const double &echell
 		 if (cycleZ0.x != pointDefaut.x || cycleZ0.y != pointDefaut.y) {
 			 if (nEstPasDejaUnCycle(cycleZ0)){ // vérifie que le cycle n'est pas déjà existant dans la liste
 				 cyclesAttractifs->push_back(cycleZ0);
-				 cycleZ0.print();
+				 if (affichageDesCycles)
+                     cycleZ0.print();
 			 }
 		 }
-	 }
-	 cout << cyclesAttractifs->size() << endl;
+    }
+	if (affichageDesCycles)
+        cout << cyclesAttractifs->size() << endl;
  }
