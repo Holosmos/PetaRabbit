@@ -15,28 +15,40 @@
 
 using namespace std;
 
+// Choix type simulation
+
+const bool fabricationImage = true;
+const bool fenetreSimulation = false;
+
 // Paramètres globaux
 
-const bool peindreEnBlanc = false;
+const string cheminFichierPhoto = "/Users/Raphael/Desktop/PhotoJulia.png";
+
+const double finesseConvergence = 0.005;
+const unsigned int borneInitiale = 100;
+
+const double facteurResolutionInitiale = .5;
+const double echelleInitiale = 0.00215;
+
+const complex<double> origineInitale(0,0);
+
+const bool peindreEnBlanc = true;
 const bool symetrieVerticale = false;
 
 const bool estJulia = true;
 const bool estMandelbrot = !estJulia;
 
-FractionRationnelle exempleJulia(unsigned int j);
-const FractionRationnelle fracJulia = exempleJulia(0);
-
-const double finesseConvergence = 0.0005;
+function<Homogene(Homogene)> exempleJulia(unsigned int j);
+const function<Homogene(Homogene)> fonctionJulia = exempleJulia(0);
 
 const Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
 const Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0));
 
-// Propre à Cycles.h/cpp
+// Propre à Cycles
 
 const double c_eps = 0.00005;
 const unsigned int c_borne = 100;
 const double parametreDistance = 0.005;
-
 
 
 #endif /* Parametres_h */

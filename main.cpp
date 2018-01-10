@@ -31,15 +31,15 @@ int main(int argc, char** argv){
 
     // == Paramètres simulation
     
-    double scale = 0.5;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
-    unsigned int hauteur = scale*1080 ;
-    unsigned int longueur =  scale*1920 ;
+    double facteur = facteurResolutionInitiale;  //    // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
+    unsigned int hauteur = facteur * 1080 ;
+    unsigned int longueur =  facteur * 1920 ;
     
-    double echelle = 0.00215 / scale ;
-    double o_x = 0.0, o_y=0.0;
+    double echelle = echelleInitiale / facteur ;
+    double o_x = origineInitale.real(), o_y = origineInitale.imag();
     complex<double> origine(o_x,o_y);
 
-    unsigned int borne = 100;
+    unsigned int borne = borneInitiale;
 
     // == Préparation du moteur de la dynamique
 
@@ -48,8 +48,9 @@ int main(int argc, char** argv){
 
     // == Préparation de la fonction qui sera utilisée
 
-    function<Homogene(Homogene)> fonction = fracJulia.fonctionRationnelle;
-
+    //const function<Homogene(Homogene)> fonction = fracJulia.fonctionRationnelle;
+    const function<Homogene(Homogene)> fonction = fonctionJulia;
+    
 	// Cas d'un Julia
     vector<Homogene>* cycles = new vector<Homogene>;
     Cycle moteurDesCycles(fonction, cycles);
@@ -71,127 +72,127 @@ int main(int argc, char** argv){
     dynamicien.dynamique = dyn;
 
     // ===== Fabrication de l'image seule =====
-
-    vector<unsigned char> image = faireImage(hauteur, longueur, origine, echelle, peindreEnBlanc, symetrieVerticale, dynamicien);
-    
-    string filename;
-    if (argc > 1)
-        filename = argv[1];
-    else
-        filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
-    lodepng::encode(filename, image, longueur, hauteur);
-
+    if (fabricationImage){
+        vector<unsigned char> image = faireImage(hauteur, longueur, origine, echelle, peindreEnBlanc, symetrieVerticale, dynamicien);
+        
+        string filename;
+        if (argc > 1)
+            filename = argv[1];
+        else
+            filename =  cheminFichierPhoto;
+        lodepng::encode(filename, image, longueur, hauteur);
+    }
     //*/ // =====
 
 
-	/*/ ===== Gestion de la fenêtre et des interactions avec l'utilisateur =====
-
+	// ===== Gestion de la fenêtre et des interactions avec l'utilisateur =====
+    if (fenetreSimulation){
     // Création de la fenêtre
-
-    RenderWindow window(VideoMode(longueur, hauteur), "Simulation Julia");
-    window.setFramerateLimit(5);
-
-    bool remakeSize = false, remake = false;
-
-    VertexArray tab = dynamicien.creeLaMatriceWin(longueur, hauteur, echelle, origine);
-
-	while (window.isOpen()){
-
-		Event event;
-		while (window.pollEvent(event))
-		{
-
-			if (event.type == Event::Closed){
-				window.close();
-			}
-			if (event.type == Event::Resized){
-				remakeSize = true;
+        RenderWindow window(VideoMode(longueur, hauteur), "Simulation Julia");
+        window.setFramerateLimit(5);
+        
+        bool remakeSize = false, remake = false;
+        
+        VertexArray tab = dynamicien.creeLaMatriceWin(longueur, hauteur, echelle, origine);
+        
+        while (window.isOpen()){
+            
+            Event event;
+            while (window.pollEvent(event))
+            {
+                
+                if (event.type == Event::Closed){
+                    window.close();
+                }
+                if (event.type == Event::Resized){
+                    remakeSize = true;
+                }
+                
+                if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                    echelle /= 1.3;
+                    remake = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Down)){
+                    echelle *= 1.3;
+                    remake = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Right)){
+                    borne += (int) (borne*1.0/4);
+                    remake = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Left)){
+                    borne -= (int) (borne*1.0/4);
+                    remake = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Z)) {
+                    o_y += 10*echelle;
+                    origine = complex<double>(o_x,o_y);
+                    remake = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::S)) {
+                    o_y -= 10*echelle;
+                    origine = complex<double>(o_x,o_y);
+                    remake = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Q)) {
+                    o_x -= 10*echelle;
+                    origine = complex<double>(o_x,o_y);
+                    remake = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::D)) {
+                    o_x += 10*echelle;
+                    origine = complex<double>(o_x,o_y);
+                    remake = true;
+                }
+                if (estJulia && Keyboard::isKeyPressed(Keyboard::C)) {
+                    moteurDesCycles.chercheANouveau(origine, echelle);
+                    remake = true;
+                }
+                
             }
-
-			if (Keyboard::isKeyPressed(Keyboard::Up)) {
-				echelle /= 1.3;
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Down)){
-				echelle *= 1.3;
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Right)){
-				borne += (int) (borne*1.0/4);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Left)){
-				borne -= (int) (borne*1.0/4);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Z)) {
-				o_y += 10*echelle;
-				origine = complex<double>(o_x,o_y);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::S)) {
-				o_y -= 10*echelle;
-				origine = complex<double>(o_x,o_y);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Q)) {
-				o_x -= 10*echelle;
-				origine = complex<double>(o_x,o_y);
-				remake = true;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				o_x += 10*echelle;
-				origine = complex<double>(o_x,o_y);
-				remake = true;
-			}
-			if (estJulia && Keyboard::isKeyPressed(Keyboard::C)) {
-				moteurDesCycles.chercheANouveau(origine, echelle);
-				remake = true;
-			}
-
-		}
-
-		if (remakeSize) {
-			Vector2u size=window.getSize();
-			longueur = size.x;
-			hauteur = size.y;
-
-			tab.clear();
-			tab.resize(longueur*hauteur);
-			tab = dynamicien.creeLaMatriceWin(longueur, hauteur, echelle, origine);
-
-			Vector2i position = window.getPosition();
-			window.create(VideoMode(longueur, hauteur), "Simulation Julia");
-			window.setPosition(position);
-
-			remakeSize = false;
-		}
-		if (remake) {
-			tab.clear();
-
-            dynamicien.peindreEnBlanc = peindreEnBlanc;
-			dynamicien.borneDIteration = borne;
-
-			// Selectionner selon la dynamique
-
-			//  Julia
-			if (estJulia)
-                julia.borneDIteration = borne;
-
-			//  Mandelbrot
-			if (estMandelbrot)
-                mandel.borneDIteration = borne;
-
-			tab = dynamicien.creeLaMatriceWin(longueur, hauteur, echelle, origine);
-			remake = false;
-		}
-
-		window.clear(Color::White);
-
-		window.draw(tab);
-
-		window.display();
-	}
+            
+            if (remakeSize) {
+                Vector2u size=window.getSize();
+                longueur = size.x;
+                hauteur = size.y;
+                
+                tab.clear();
+                tab.resize(longueur*hauteur);
+                tab = dynamicien.creeLaMatriceWin(longueur, hauteur, echelle, origine);
+                
+                Vector2i position = window.getPosition();
+                window.create(VideoMode(longueur, hauteur), "Simulation Julia");
+                window.setPosition(position);
+                
+                remakeSize = false;
+            }
+            if (remake) {
+                tab.clear();
+                
+                dynamicien.peindreEnBlanc = peindreEnBlanc;
+                dynamicien.borneDIteration = borne;
+                
+                // Selectionner selon la dynamique
+                
+                //  Julia
+                if (estJulia)
+                    julia.borneDIteration = borne;
+                
+                //  Mandelbrot
+                if (estMandelbrot)
+                    mandel.borneDIteration = borne;
+                
+                tab = dynamicien.creeLaMatriceWin(longueur, hauteur, echelle, origine);
+                remake = false;
+            }
+            
+            window.clear(Color::White);
+            
+            window.draw(tab);
+            
+            window.display();
+        }
+    }
  //*/
 	return 0;
 }

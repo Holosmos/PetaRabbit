@@ -8,64 +8,74 @@
 
 #include "Parametres.h"
 
-FractionRationnelle exempleJulia(unsigned int j){
-    vector<complex<double>> p1;
-    vector<complex<double>> p2;
-    complex<double> i(0.0,1.0);
+function<Homogene(Homogene)> exempleJulia(unsigned int j){
+    function<Homogene(Homogene)> fonction;
     switch (j) {
-        case 0:
-            p1 = vector<complex<double>>(3,0.*i);    // LAPIN
-            p1[2] = 1. + 0.*i;
-            p1[0] = -0.123 + 0.745*i;
-            p2 = vector<complex<double>>(1,1. + 0.*i);
+        case 0:// LAPIN
+            fonction = [](Homogene point){
+                if (point.carteX() == 0.) {
+                    return Homogene(1.,0.);
+                }
+                complex<double> a = point.carteY();
+                return Homogene(a*a + complex<double>(-0.123,0.745));
+            };
             break;
-        case 1:
-            p1 = vector<complex<double>>(3,0.*i);  // COLLIER
-            p1[2] = 1. + 0.*i;
-            p1[0] = -1. + 0.*i;
-            p2 = vector<complex<double>>(3,0.*i);
-            p2[2] = 1. + 0.*i;
+        case 1:// COLLIER
+            fonction = [](Homogene point){
+                if (point.carteX() == 0.) {
+                    return Homogene(1.,1.);
+                }
+                complex<double> a = point.carteY();
+                if (a == 0.) {
+                    return Homogene(1.,0.);
+                }
+                return Homogene(1. + complex<double>(-1.)/(a*a));
+            };
             break;
-        case 2:
-            p1 =  vector<complex<double>>(3,0.*i); // GALAXIE
-            p1[2] = -0.138 + 0.*i;
-            p1[1] = -0.303 + 0.*i;
-            p1[0] = -0.138 + 0.*i;
-            p2 = vector<complex<double>>(2,0.*i);
-            p2[1] = 1. +0.*i;
+        case 2:// GALAXIE
+            fonction = [](Homogene point){
+                if (point.carteX() == 0.) {
+                    return Homogene(1.,0.);
+                }
+                complex<double> a = point.carteY();
+                if (a == 0.) {
+                    return Homogene(1.,0.);
+                }
+                return Homogene(-0.138*a + -0.303 + -0.138/a);
+            };
             break;
-        case 3:
-            p1 = vector<complex<double>>(3,0.*i); // STRANGE
-            p1[2] = 1. + 0.*i;
-            p1[0] = -0.8 + 0.*i;
-            p2 = vector<complex<double>>(1,1. +0.*i);
+        case 3:// STRANGE
+            fonction = [](Homogene point){
+                if (point.carteX() == 0.) {
+                    return Homogene(1.,0.);
+                }
+                complex<double> a = point.carteY();
+                return Homogene(a*a + -0.8);
+            };
             break;
-        case 4:
-            p1 = vector<complex<double>>(4,0.*i);  // NEWTON
-            p1[3] = 2. + 0.*i;
-            p1[0] = -2. + 0.*i;
-            p2 = vector<complex<double>>(3,0.*i);
-            p2[2] = 3. + 0.*i;
-            p2[0] = -2. + 0.*i;
+        case 4:// NEWTON
+            fonction = [](Homogene point){
+                if (point.carteX() == 0.) {
+                    return Homogene(1.,0.);
+                }
+                complex<double> a = point.carteY();
+                return Homogene(2.*a*a*a + -2., 3.*a*a - 2.);
+            };
             break;
-        case 5:
-            p1 = vector<complex<double>>(26,0.*i);   // PENTAGONE
-            p1[25] = 87. + 0.*i;
-            p1[20] = -3335. + 0.*i;
-            p1[10] = -6670. + 0.*i;
-            p1[5] = -435. + 0.*i;
-            p1[0] = 1. + 0.*i;
-            p2 = vector<complex<double>>(30,0.*i);
-            p2[29] = -1. + 0.*i;
-            p2[24] = -435. + 0.*i;
-            p2[19] = 6670. + 0.*i;
-            p2[9] = 3335. + 0.*i;
-            p2[4]  = 87. + 0.*i;
+        case 5:// PENTAGONE
+            fonction = [](Homogene point){
+                if (point.carteX() == 0.) {
+                    return Homogene(0.,1.);
+                }
+                complex<double> a = point.carteY();
+                complex<double> c = a*a*a*a;
+                complex<double> b = c*a;
+                return Homogene(1. + b*(-435.) + b*b*(-6670.) + b*b*b*b*(-3335.) + b*b*b*b*b*(87.),
+                                c*(87.) + c*b*(3335.) + c*b*b*b*(6670.) + c*b*b*b*b*(-435.) + c*b*b*b*b*b*(-1.));
+            };
             break;
         default:
             break;
     }
-    
-    Polynome nume(p1), deno(p2);
-    return FractionRationnelle(nume,deno);
+    return fonction;
 }
