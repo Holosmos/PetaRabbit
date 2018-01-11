@@ -62,11 +62,13 @@ vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &long
     
     image.resize(longueur * hauteur * 4);
     vector<complex<double>> matrice = dynamicien.creeLaMatrice(longueur, hauteurBis, echelle, origine);
-    
+
+    #pragma omp parallel for
     for (unsigned int y = 0; y < hauteurBis; y++)
         remplitImage(&image, matrice, y, longueur, peindreEnBlanc);
     
     if (symetrieVerticale){
+        #pragma omp parallel for
         for (unsigned int y = 0; y < hauteurBis; y++)
             for (unsigned int x = 0; x < longueur; x++) {
                 vector<double> couleur = coloration(matrice[y*longueur+x], peindreEnBlanc);
