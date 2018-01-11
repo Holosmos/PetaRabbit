@@ -24,11 +24,11 @@ const bool fenetreSimulation = false;
 
 const string cheminFichierPhoto = "/Users/Raphael/Desktop/PhotoJulia.png";
 
-const double finesseConvergence = 0.005;
-const unsigned int borneInitiale = 100;
+const double finesseConvergence = 0.001;
+const unsigned int borneInitiale = 200;
 
-const double facteurResolutionInitiale = .5;
-const double echelleInitiale = 0.00215;
+const double facteurResolutionInitiale = 1;
+const double echelleInitiale = 0.0025;
 
 const complex<double> origineInitale(0,0);
 
@@ -45,14 +45,18 @@ const Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,
 const Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0));
 
 // Propre à Cycles
+const bool affichageDesCycles = false;
+
+const unsigned int nombreDeCyclesVoulus = 2;
+const unsigned int nombreDeTirages = 500;
+const unsigned int nombreIterationsTests = 300;
 
 const bool rechercheProfondeDansJulia = false;
-
-const bool affichageDesCycles = false;
 
 const double c_eps = 0.00005;
 const unsigned int c_borne = 100;
 const double parametreDistance = 0.005;
+
 
 
 #endif /* Parametres_h */

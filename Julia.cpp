@@ -29,8 +29,10 @@ complex<double> Julia::convergenceDe(Homogene z){
         
         if ((cycle.x != pointDefaut.x || cycle.y != pointDefaut.y)) {
             cyclesAttractifs->push_back(cycle);
-            //cout << "+1 spé";
-            //cycle.print();
+            if (affichageDesCycles){
+                cout << "+1";
+                cycle.print();
+            }
             for (int j = 0; j<= borneDIteration ; j++) {
                 if ( copie.distanceAvec(cycle) < finesseConvergence) {
                     return complex<double>(j, cyclesAttractifs->size());

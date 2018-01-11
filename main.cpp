@@ -75,11 +75,9 @@ int main(int argc, char** argv){
     if (fabricationImage){
         vector<unsigned char> image = faireImage(hauteur, longueur, origine, echelle, peindreEnBlanc, symetrieVerticale, dynamicien);
         
-        string filename;
+        string filename =  cheminFichierPhoto;
         if (argc > 1)
             filename = argv[1];
-        else
-            filename =  cheminFichierPhoto;
         lodepng::encode(filename, image, longueur, hauteur);
     }
     //*/ // =====
