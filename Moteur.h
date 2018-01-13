@@ -16,10 +16,10 @@
 #include "Mandelbrot.h"
 
 
-void remplitImage(std::vector<unsigned char> *image, const std::vector<std::complex<double>> &matrice, const unsigned int &y, const unsigned int &longueur, const bool &peindreEnBlanc);
+void remplitImage(std::vector<unsigned char> *image, const std::vector<std::complex<double>> &matrice, const unsigned int &y, const unsigned int &longueur);
 
-std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc);
+std::vector<double> coloration(complex<double> couleur);
 
-vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &longueur, complex<double> &origine, const double &echelle, const bool &peindreEnBlanc, const bool &symetrieVerticale, Dynamicien &dynamicien);
+vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &longueur, const double &echelle, complex<double> &origine, Dynamicien &dynamicien);
 
 #endif /* Moteur_h */

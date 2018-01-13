@@ -1,0 +1,26 @@
+<head>
+    <meta charset="utf-8">
+    <title>Fractale explorer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+crossorigin=""></script>
+</head>
+
+<body>
+    <div id="map" style="height: 100%;"></div>
+    <script charset="utf-8">
+        var map = L.map("map",{
+            minZoom: 0.1,
+            maxZoom: 200,
+            zoomSnap: 0.1,
+            zoomDelta: 0.1
+        })
+        map.setView([0, 0], 1);
+        
+        L.tileLayer('/tiles/{z}/{x}/{y}.png').addTo(map);
+    </script>
+</body>
+

@@ -1,5 +1,5 @@
 //
-//  Parametres.hpp
+//  Parametres.h
 //  Simulation Dynamiques
 //
 //  Created by Raphaël Alexandre on 09/01/2018.
@@ -15,24 +15,26 @@
 
 using namespace std;
 
-// Choix type simulation
-
-const bool fabricationImage = true;
-const bool fenetreSimulation = false;
-
 // Paramètres globaux
 
-const string cheminFichierPhoto = "/Users/Raphael/Desktop/PhotoJulia.png";
+const string cheminFichierPhoto = "./PhotoJulia.png";
 
-const double finesseConvergence = 0.001;
-const unsigned int borneInitiale = 200;
+// Paramètres fenêtre
 
-const double facteurResolutionInitiale = 1;
-const double echelleInitiale = 0.0025;
+const double facteur = 1; // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
+const double echelleInitiale = 0.01 / facteur;
 
 const complex<double> origineInitale(0,0);
 
 const bool peindreEnBlanc = true;
+
+// Paramètres analytiques
+
+const double finesseConvergence = 0.001;
+const unsigned int borneDIteration = 200;
+
+// Paramètres dynamiques
+
 const bool symetrieVerticale = false;
 
 const bool estJulia = true;
@@ -40,22 +42,13 @@ const bool estMandelbrot = !estJulia;
 
 function<Homogene(Homogene)> exempleJulia(unsigned int j);
 const function<Homogene(Homogene)> fonctionJulia = exempleJulia(0);
+const unsigned int nombreDeCyclesVoulus = 2;
+
+
+// Constantes - À ignorer
 
 const Homogene pointDefaut = Homogene(complex<double>(-1,-2),complex<double>(-3,-4));
 const Homogene pointInfini = Homogene(complex<double>(1.0),complex<double>(0.0));
-
-// Propre à Cycles
-const bool affichageDesCycles = false;
-
-const unsigned int nombreDeCyclesVoulus = 2;
-const unsigned int nombreDeTirages = 500;
-const unsigned int nombreIterationsTests = 300;
-
-const bool rechercheProfondeDansJulia = false;
-
-const double c_eps = 0.00005;
-const unsigned int c_borne = 100;
-const double parametreDistance = 0.005;
 
 
 

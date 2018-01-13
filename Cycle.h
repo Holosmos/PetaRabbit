@@ -9,6 +9,21 @@
 
 #include "Parametres.h"
 
+
+/// === paramètres
+const bool affichageDesCycles = false;
+
+const unsigned int nombreDeTirages = 500;
+const unsigned int nombreIterationsTests = 300;
+
+const bool rechercheProfondeDansJulia = false;
+
+const double c_eps = 0.00005;
+const unsigned int c_borne = 100;
+const double parametreDistance = 0.005;
+
+/// ===
+
 class Cycle {
 	std::function<Homogene(Homogene)> fonctionIteree;
     std::vector<Homogene>* cyclesAttractifs;

@@ -8,9 +8,9 @@
 
 #include "Moteur.h"
 
-void remplitImage(std::vector<unsigned char> *image, const std::vector<std::complex<double>> &matrice, const unsigned int &y, const unsigned int &longueur, const bool &peindreEnBlanc){
+void remplitImage(std::vector<unsigned char> *image, const std::vector<std::complex<double>> &matrice, const unsigned int &y, const unsigned int &longueur){
     for (unsigned int x = 0; x < longueur; x++) {
-        std::vector<double> couleur = coloration(matrice[y*longueur+x], peindreEnBlanc);
+        std::vector<double> couleur = coloration(matrice[y*longueur+x]);
         for (int k = 0; k < 3; k++)
             (*image)[4 * (y * longueur + x) + k] = couleur[k];
         (*image)[4 * (y * longueur + x) + 3] = 255;
@@ -18,7 +18,7 @@ void remplitImage(std::vector<unsigned char> *image, const std::vector<std::comp
 }
 
 
-std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc){
+std::vector<double> coloration(complex<double> couleur){
     std::vector<double> couleurObtenue(3,couleur.real());
     if (!peindreEnBlanc){
         switch (int(couleur.imag())%7) { // 7 couleurs prévues
@@ -49,7 +49,7 @@ std::vector<double> coloration(complex<double> couleur, bool peindreEnBlanc){
     return couleurObtenue;
 }
 
-vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &longueur, complex<double> &origine, const double &echelle, const bool &peindreEnBlanc, const bool &symetrieVerticale, Dynamicien &dynamicien){
+vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &longueur, const double &echelle, complex<double> &origine, Dynamicien &dynamicien){
     vector<unsigned char> image;
     unsigned int hauteurBis = hauteur;
     
@@ -65,13 +65,13 @@ vector<unsigned char> faireImage(unsigned int &hauteur, const unsigned int &long
 
     #pragma omp parallel for
     for (unsigned int y = 0; y < hauteurBis; y++)
-        remplitImage(&image, matrice, y, longueur, peindreEnBlanc);
+        remplitImage(&image, matrice, y, longueur);
     
     if (symetrieVerticale){
         #pragma omp parallel for
         for (unsigned int y = 0; y < hauteurBis; y++)
             for (unsigned int x = 0; x < longueur; x++) {
-                vector<double> couleur = coloration(matrice[y*longueur+x], peindreEnBlanc);
+                vector<double> couleur = coloration(matrice[y*longueur+x]);
                 for (unsigned int k = 0; k < 3; k++)
                     image[4 * ((hauteur-1 - y) * longueur + x) + k] = couleur[k];
                 image[4 * ((hauteur-1 - y) * longueur + x) + 3] = 255;

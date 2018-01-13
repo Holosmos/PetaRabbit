@@ -9,7 +9,6 @@
 #ifndef Dynamicien_h
 #define Dynamicien_h
 
-#include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -24,17 +23,11 @@
 
 struct Dynamicien {
     
-    Dynamicien(const unsigned int &borneDIteration, const bool &peindreEnBlanc);
-    
-	unsigned int borneDIteration;
+    Dynamicien(const bool &peindreEnBlanc);
+
     bool peindreEnBlanc;
 	std::function<complex<double>(Homogene)> dynamique;
-    std::vector<complex<double>> creeLaMatrice(int longueur, int hauteur, double echelle, complex<double> origine);
-
-
-    // A vocation à disparaitre
-	sf::VertexArray creeLaMatriceWin(int longueur, int hauteur, double echelle, complex<double> origine);
-    const char* filename =  "/Users/Raphael/Desktop/PhotoJulia.png";
+    std::vector<complex<double>> creeLaMatrice(int longueur, int hauteur, const double &echelle, complex<double> origine);
 };
 
 #endif /* Dynamicien_h */
