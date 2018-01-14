@@ -45,8 +45,8 @@ int main(int argc, char** argv){
     
     // == Paramètres simulation
 
-    unsigned int hauteur = facteur * 250 ;
-    unsigned int longueur =  facteur * 250 ;
+    unsigned int hauteur = 250 ;
+    unsigned int longueur = 250 ;
     
     double o_x = origineInitale.real(), o_y = origineInitale.imag();
     o_x += offSetX*longueur*echelle - longueur*zoom*echelle/2. + longueur*echelle/2.;
