@@ -45,12 +45,12 @@ int main(int argc, char** argv){
     
     // == Paramètres simulation
 
-    unsigned int hauteur = facteur * 100 ;
-    unsigned int longueur =  facteur * 100 ;
+    unsigned int hauteur = facteur * 250 ;
+    unsigned int longueur =  facteur * 250 ;
     
     double o_x = origineInitale.real(), o_y = origineInitale.imag();
-    o_x += offSetX*echelle - longueur*echelle/2.;
-    o_y += offSetY*echelle - hauteur*echelle/2.;
+    o_x += offSetX*longueur*echelle - longueur*zoom*echelle/2. + longueur*echelle/2.;
+    o_y -= offSetY*hauteur*echelle - hauteur*zoom*echelle/2. + hauteur*echelle/2.;
     complex<double> origine(o_x,o_y);
 
     // == Préparation du moteur de la dynamique

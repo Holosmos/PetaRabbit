@@ -22,7 +22,7 @@ const string cheminFichierPhoto = "./PhotoJulia.png";
 // Paramètres fenêtre
 
 const double facteur = 1; // rupture à 1 047 809 880 pixels ~= 22^2 * 1920 * 1080
-const double echelleInitiale = 0.01 / facteur;
+const double echelleInitiale = 0.05 / facteur;
 
 const complex<double> origineInitale(0,0);
 
@@ -31,7 +31,7 @@ const bool peindreEnBlanc = true;
 // Paramètres analytiques
 
 const double finesseConvergence = 0.001;
-const unsigned int borneDIteration = 200;
+const unsigned int borneDIteration = 500;
 
 // Paramètres dynamiques
 
