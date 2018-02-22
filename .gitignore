@@ -1,3 +1,4 @@
+build/
 *.o
 CMakeCache.txt
 CMakeFiles
@@ -8,6 +9,6 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
-pentarabbit 
+petarabbit
 compile_commands.json
 photoJulia.png
