@@ -1,13 +1,20 @@
 # PetaRabbit
 
-Pour compiler :
+PetaRabbit utilise OpenMP et la SFML, veuillez les installer sur votre machine.
 
-## sous Linux : 
-Installer openMP (openmp pour archlinux, libomp-dev ou sous debian et dérivés)
+Pour installer openMP sous Mac OS, [voir ici](https://stackoverflow.com/questions/35134681/installing-openmp-on-mac-os-x-10-11#35417448).
 
-``cmake .`` puis ```make -j4```
+Sous linux, installer le paquet openmp pour archlinux, libomp-dev ou sous
+debian et dérivés.
 
-## sous OS X :
-Pour installer openMP: voir [ici](https://stackoverflow.com/questions/35134681/installing-openmp-on-mac-os-x-10-11#35417448)
+## Compilation hors source avec CMake
 
-``g++ -c *.cpp -std=c++11 -fopenmp`` puis ``g++ *.o -o petarabbit -lsfml-graphics -lsfml-window -lsfml-system -lpthread -fopenmp``
+    mkdir build
+    cd build
+    cmake ..
+    make -j4
+
+## Compilation sans CMake
+
+    g++ -c *.cpp -std=c++11 -fopenmp
+    g++ *.o -o petarabbit -lsfml-graphics -lsfml-window -lsfml-system -lpthread -fopenmp
