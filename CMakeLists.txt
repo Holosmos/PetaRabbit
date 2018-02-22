@@ -5,7 +5,9 @@ include(FindOpenMP)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3 ${OpenMP_CXX_FLAGS}")
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-add_executable(${PROJECT_NAME} main.cpp Algebre.cpp Cycle.cpp Julia.cpp lodepng.cpp Dynamicien.cpp)
+add_executable(${PROJECT_NAME} main.cpp
+    Algebre.cpp Cycle.cpp Dynamicien.cpp Julia.cpp
+    lodepng.cpp Mandelbrot.cpp Moteur.cpp Parametres.cpp)
 
 find_package (Threads)
 find_package(SFML 2 REQUIRED graphics window system)
